@@ -1,0 +1,39 @@
+// This file represents the main components of a simplified banking system (SBS) and their relationships, including Bank, Account, Customer, and Transaction.
+
+// This class abstracts the concept of a Bank, which has a name and is composed of Accounts and Customers.
+class Bank {
+  attribute name: string;
+  composed_of accounts: Account[1..*];
+  composed_of customers: Customer[1..*];
+}
+
+// This class abstracts the concept of an Account, which has an accountNumber, a balance, a reference to the Customer who owns it, and a composition of Transactions.
+class Account {
+  attribute accountNumber: string;
+  attribute balance: double;
+  reference ownedBy: Customer[1];
+  composed_of transactions: Transaction[0..*];
+}
+
+// This class abstracts the concept of a Customer, which has a name, an SSN, and a reference to the Account they own.
+class Customer {
+  attribute name: string;
+  attribute ssn: string;
+  reference accountOwned: Account[1];
+}
+
+// This class abstracts the concept of a Transaction, which has a transactionID, an amount, a date, a type, and a reference to the Account it is associated with.
+class Transaction {
+  attribute transactionID: string;
+  attribute amount: double;
+  reference accountInvolved: Account[1];
+  // attribute type: EnumTransactionType;
+  // attribute date: dateTime;
+}
+
+// Extra: maybe add enum to the DSL? This would be simple to translate to TypeScript, but is not necessary, adds more complexity to the DSL; overall, it is not a core feature of the language.
+// enum EnumTransactionType {
+//   DEPOSIT,
+//   WITHDRAWAL,
+//   TRANSFER
+// }
