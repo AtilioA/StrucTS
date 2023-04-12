@@ -1,0 +1,12 @@
+{
+    "projectName": "StrucTs",
+    "languages": [{
+        "id": "struc-ts",
+        "grammar": "src/language-server/struc-ts.langium",
+        "fileExtensions": [".sts"],
+        "textMate": {
+            "out": "syntaxes/struc-ts.tmLanguage.json"
+        }
+    }],
+    "out": "src/language-server/generated"
+}
