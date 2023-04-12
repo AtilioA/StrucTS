@@ -1,0 +1,30 @@
+// This is a comment.
+// This class abstracts the concept of an album, which has a title, an artist, and a list of songs. Each song is a reference to a Song object. This class uses the composed_of keyword, which indicates that the class is [...]
+class Album {
+  attribute title: string;
+  attribute artist: Artist;
+  // Maybe this should not have a cardinality, since it is a composition.
+  composed_of songs: Song[1..*];
+}
+
+// This class abstracts the concept of an artist, which has a name. This class also uses the Factory interface, which indicates that the generated code will include a Factory class, with all the necessary methods to create instances of this class according to the Factory pattern.
+class Artist implements Factory {
+  attribute name: string;
+}
+
+// This class abstracts the concept of a song, which has a title, a length, and a reference to the artist who composed it.
+class Song {
+  attribute title: string;
+  attribute length: number;
+  reference inAlbum: Album[1];
+}
+
+// This class abstracts the concept of a playlist, which has a name, and a list of songs. This class uses the ManyToMany association, which indicates that the generated code will include a class that represents the association between the two classes. A Playlist can have many songs, and a Song can be in many playlists.
+class Playlist {
+  attribute name: string;
+  reference songs: Song[*];
+}
+
+association ManyToMany {
+  between: Playlist[*] and Song[*];
+}
