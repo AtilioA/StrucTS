@@ -12,10 +12,11 @@ class Artist implements Factory {
   attribute name: string;
 }
 
-// This class abstracts the concept of a song, which has a title, a length, and a reference to the artist who composed it.
+// This class abstracts the concept of a song, which has a title, a duration, and a reference to the artist who composed it.
 class Song {
   attribute title: string;
-  attribute length: number;
+  // What if the user calls this length? It a reserved qword in TypeScript.
+  attribute duration: number;
   reference inAlbum: Album[1];
 }
 
