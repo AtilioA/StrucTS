@@ -107,3 +107,4 @@ dist
 /bin/
 /out/
 generated/
+examples/*.js
