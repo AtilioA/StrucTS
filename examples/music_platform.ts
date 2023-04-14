@@ -2,8 +2,8 @@
 // We will use this implementation to create a collection of songs for an album
 // A collection can have a minimum number of items and a maximum number of items.
 
-// The generic type (T) will be used to specify the type of item that can be added to the collection.
-export class CustomCollection<T> {
+// The generic type (T) will be used to specify the type of item that can be added to the collection. Must not be exported.
+class CustomCollection<T> {
   // The items in the collection are stored in an array.
   private items: T[];
 
@@ -32,7 +32,7 @@ export class CustomCollection<T> {
     } else {
       // An error is thrown to indicate that the item could not be added to the collection due to the cardinality constraint.
       throw new Error(
-        `Adding this item would violate the cardinality constraint: Album cannot have more than ${this.maxItems} Songs.`
+        `Adding this item would violate the cardinality constraint: Collection cannot have more than ${this.maxItems} items.`
       );
     }
   }
@@ -55,7 +55,7 @@ export class CustomCollection<T> {
       if (this.items.length < this.minItems) {
         // An error is thrown to indicate that the item could not be removed from the collection, due to the cardinality constraint.
         throw new Error(
-          `Removing this item would violate the cardinality constraint: Album cannot have less than ${this.minItems} Songs.`
+          `Removing this ${typeof item} would violate the cardinality constraint: ${this.constructor.name} cannot have less than ${this.minItems} items.`
         );
         // If the number of items in the collection is greater than or equal to the minItems, the item can be removed from the collection.
       } else {
@@ -66,7 +66,7 @@ export class CustomCollection<T> {
     } else {
       // An error is thrown to indicate that the item could not be removed from the collection.
       throw new Error(
-        "The item you are trying to remove does not exist in the collection, so it cannot be removed."
+        `The ${typeof item} to be removed does not exist in the collection, so it cannot be removed.`
       );
     }
   }
