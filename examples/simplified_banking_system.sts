@@ -10,7 +10,7 @@ class Bank {
 // This class abstracts the concept of an Account, which has an accountNumber, a balance, a reference to the Customer who owns it, and a composition of Transactions.
 class Account {
   attribute accountNumber: string;
-  attribute balance: double;
+  attribute balance: number;
   reference ownedBy: Customer[1];
   composed_of transactions: Transaction[0..*];
 }
@@ -25,7 +25,7 @@ class Customer {
 // This class abstracts the concept of a Transaction, which has a transactionID, an amount, a date, a type, and a reference to the Account it is associated with.
 class Transaction {
   attribute transactionID: string;
-  attribute amount: double;
+  attribute amount: number;
   reference accountInvolved: Account[1];
   // attribute type: EnumTransactionType;
   // attribute date: dateTime;
