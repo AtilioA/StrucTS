@@ -7,6 +7,8 @@ const books = [
   new Book("Pride and Prejudice", "Jane Austen", "9780141040349"),
   new Book("The Catcher in the Rye", "J.D. Salinger", "9780316769488"),
   new Book("1984", "George Orwell", "9780451524935"),
+  new Book("Infinite Jest", "David Foster Wallace", "9780274994748"),
+  new Book("Thinking, Fast and Slow", "Daniel Kahneman", "9780374533557"),
 ];
 
 const members = [
@@ -21,7 +23,7 @@ members.forEach(member => library.addMember(member));
 const bookCount = books.length;
 const memberCount = members.length;
 
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 12; i++) {
   const bookIndex = Math.floor(Math.random() * bookCount);
   const memberIndex = Math.floor(Math.random() * memberCount);
 
