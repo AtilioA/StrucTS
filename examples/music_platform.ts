@@ -100,12 +100,25 @@ export class Song {
   }
 }
 
-// Declare a class
+/**
+ * Class for the AlbumFactory. It is responsible for creating new Album instances.
+ */
+class AlbumFactory {
+  /**
+   * Creates an album instance
+   * @param {string} title - The album title
+   * @param {Artist} artist - The artist who created the album
+   * @returns {Album} - The new album
+   */
+
+  createAlbum(title: string, artist: Artist): Album {
+    return new Album(title, artist);
+  }
+}
+
 export class Artist {
-  // Define a property
   name: string;
 
-  // Define a constructor
   constructor(name: string) {
     this.name = name;
   }
