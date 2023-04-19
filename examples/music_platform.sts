@@ -26,6 +26,7 @@ class Playlist {
   reference songs: Song[*];
 }
 
+// REVIEW: is this needed?
 association ManyToMany {
   between: Playlist[*] and Song[*];
 }

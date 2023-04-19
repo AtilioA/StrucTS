@@ -6,27 +6,35 @@ entry Model:
 
 // Define an element to represent the different constructs in the DSL
 Element:
-    Class | Association;
+    Class/* | Association*/;
 
 // Define the 'Class' rule to capture class definitions
 Class:
-    'class' name=ID ('implements' implemented+=FactoryInterface)? '{'
+    'class' name=ID ('implements' implemented+=Interface)? '{'
     properties+=Property* '}';
 
-// Define the 'FactoryInterface' rule
+// Define a generic 'Interface' rule to capture interfaces, like 'FactoryInterface'
+Interface:
+    // It would be possible to add other interfaces here '|'
+    FactoryInterface;
+
+// Define the 'FactoryInterface' rule for capturing factory implementations
 FactoryInterface:
     // REVIEW: This might be a hack to have 'Factory' as a keyword
     STRING='Factory';
 
 // Define the 'Property' rule to capture the properties of a class
 Property:
-    ('composed_of' | 'contains' | 'in')? name=ID ':' type=Type cardinality=Cardinality? ';';
+    // This allows cardinalities with a primitive type.
+    ('composed_of' | 'attribute')? name=ID ':' type=Type cardinality=Cardinality? ';';
+// TODO: add 'reference' keyword to allow references to other classes
 
-// Define the 'Type' rule to represent types in the DSL
+
+// Define the 'Type' rule to represent types in the DSL. It can be a primitive type or a reference to another class object
 Type:
-    DataType | Class;
+    DataType | ClassReference;
 
-// Define the 'DataType' rule for primitive data types
+// Define the 'DataType' rule for primitive data types. Currently, only string, number and boolean are supported.
 DataType returns string:
     'string' | 'number' | 'boolean';
 
@@ -34,10 +42,11 @@ DataType returns string:
 Cardinality:
     '[' lower=INT ('..' upper=INT)? ']';
 
-// Define the 'Association' rule to capture associations between classes
-Association:
-    'association' name=ID '{' 'between:' left=ClassReference cardinalityLeft=Cardinality
-    'and' right=ClassReference cardinalityRight=Cardinality ';' '}';
+// REVIEW: Check if this is needed
+// // Define the 'Association' rule to capture associations between classes
+// Association:
+//     'association' name=ID '{' 'between:' left=ClassReference cardinalityLeft=Cardinality
+//     'and' right=ClassReference cardinalityRight=Cardinality ';' '}';
 
 // Define a 'ClassReference' rule to reference other classes in the DSL
 ClassReference:
@@ -49,5 +58,6 @@ terminal ID: /[_a-zA-Z][\w_]*/;
 terminal INT returns number: /[0-9]+/;
 terminal STRING: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/;
 
+// Define comment rules
 hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
 hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
