@@ -12,12 +12,12 @@ class Book {
   attribute title: string;
   attribute author: string;
   attribute isbn: string;
-  reference borrowedBy: Member[0..1];
+  references borrowedBy: Member[0..1];
 }
 
 // This class abstracts the concept of a Member, which has a name, a membershipID, and a reference to the Books they have borrowed (if any).
 class Member {
   attribute name: string;
   attribute membershipID: string;
-  reference borrowedBooks: Book[0..*];
+  references borrowedBooks: Book[0..*];
 }

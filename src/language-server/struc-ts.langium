@@ -4,15 +4,23 @@ grammar StrucTs
 entry Model:
     elements+=Element*;
 
+
+/* SECTION: Basic elements */
 // Define an element to represent the different constructs in the DSL
 Element:
-    Class/* | Association*/;
+    Class/*| Association*/;
 
 // Define the 'Class' rule to capture class definitions
 Class:
     'class' name=ID ('implements' implemented+=Interface)? '{'
     properties+=Property* '}';
 
+// Define a 'ClassReference' rule to reference other classes in the DSL
+ClassReference:
+    class=[Class];
+
+
+/* SECTION: Class Interfaces  */
 // Define a generic 'Interface' rule to capture interfaces, like 'FactoryInterface'
 Interface:
     // It would be possible to add other interfaces here '|'
@@ -23,13 +31,28 @@ FactoryInterface:
     // REVIEW: This might be a hack to have 'Factory' as a keyword
     STRING='Factory';
 
-// Define the 'Property' rule to capture the properties of a class
+
+/* SECTION: Class Properties */
+// Define the 'Property' rule to capture the properties of a class. It can be a statement for composition, attribute, or reference.
 Property:
-    // This allows cardinalities with a primitive type.
-    ('composed_of' | 'attribute')? name=ID ':' type=Type cardinality=Cardinality? ';';
-// TODO: add 'reference' keyword to allow references to other classes
+    ReferencingProperty | AttributeProperty;
+
+ReferencingProperty:
+    ComposedProperty | ReferenceProperty;
+
+ComposedProperty:
+    'composed_of' name=ID ':' type=ClassReference cardinality=Cardinality? ';';
+
+AttributeProperty:
+    // REVIEW: do we really want to allow cardinality for primitive types?
+    'attribute' name=ID ':' type=DataType cardinality=Cardinality? ';';
+
+ReferenceProperty:
+    // REVIEW: This is, effectively, an association
+    'references' name=ID ':' type=ClassReference cardinality=Cardinality? ';';
 
 
+/* SECTION: Data Types */
 // Define the 'Type' rule to represent types in the DSL. It can be a primitive type or a reference to another class object
 Type:
     DataType | ClassReference;
@@ -48,10 +71,8 @@ Cardinality:
 //     'association' name=ID '{' 'between:' left=ClassReference cardinalityLeft=Cardinality
 //     'and' right=ClassReference cardinalityRight=Cardinality ';' '}';
 
-// Define a 'ClassReference' rule to reference other classes in the DSL
-ClassReference:
-    class=[Class];
 
+/* SECTION: Terminal rules */
 // Define terminal rules
 hidden terminal WS: /\s+/;
 terminal ID: /[_a-zA-Z][\w_]*/;

@@ -11,7 +11,7 @@ class Bank {
 class Account {
   attribute accountNumber: string;
   attribute balance: number;
-  reference ownedBy: Customer[1];
+  references ownedBy: Customer[1];
   composed_of transactions: Transaction[0..*];
 }
 
@@ -19,14 +19,14 @@ class Account {
 class Customer {
   attribute name: string;
   attribute ssn: string;
-  reference accountOwned: Account[1];
+  references accountOwned: Account[1];
 }
 
 // This class abstracts the concept of a Transaction, which has a transactionID, an amount, a date, a type, and a reference to the Account it is associated with.
 class Transaction {
   attribute transactionID: string;
   attribute amount: number;
-  reference accountInvolved: Account[1];
+  references accountInvolved: Account[1];
   // attribute type: EnumTransactionType;
   // attribute date: dateTime;
 }

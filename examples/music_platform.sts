@@ -17,13 +17,13 @@ class Song {
   attribute title: string;
   // What if the user calls this length? It a reserved qword in TypeScript.
   attribute duration: number;
-  reference inAlbum: Album[1];
+  references inAlbum: Album[1];
 }
 
 // This class abstracts the concept of a playlist, which has a name, and a list of songs. This class uses the ManyToMany association, which indicates that the generated code will include a class that represents the association between the two classes. A Playlist can have many songs, and a Song can be in many playlists.
 class Playlist {
   attribute name: string;
-  reference songs: Song[*];
+  references songs: Song[*];
 }
 
 // REVIEW: is this needed?
