@@ -108,3 +108,6 @@ dist
 /out/
 generated/
 examples/*.js
+*tmLanguage.json
+.gitignore
+syntaxes/*.tmLanguage.json
