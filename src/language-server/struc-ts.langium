@@ -63,7 +63,10 @@ DataType returns string:
 
 // Define the 'Cardinality' rule to represent cardinalities in the DSL
 Cardinality:
-    '[' lower=INT ('..' upper=INT)? ']';
+    '[' lower=INT ('..' upper=UPPER_LIMIT)? ']';
+
+UPPER_LIMIT returns string:
+    '*' | INT;
 
 // REVIEW: Check if this is needed
 // // Define the 'Association' rule to capture associations between classes
