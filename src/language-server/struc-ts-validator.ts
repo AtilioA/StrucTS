@@ -9,7 +9,11 @@ export function registerValidationChecks(services: StrucTsServices) {
     const registry = services.validation.ValidationRegistry;
     const validator = services.validation.StrucTSValidator;
     const checks: ValidationChecks<StrucTsAstType> = {
-        Model: [validator.checkUniqueClassNames, validator.checkUniqueAttributeNames]
+        Model: [
+            validator.checkUniqueClassNames,
+            validator.checkUniqueAttributeNames,
+            validator.checkValidCardinality
+        ]
     };
     registry.register(checks, validator);
 }
@@ -48,6 +52,7 @@ export class StrucTSValidator {
         });
     }
 
+    // Check if attribute names are unique within a class
     checkUniqueAttributeNames(model: Model, accept: ValidationAcceptor): void {
         model.elements.forEach(e => {
             if (isClass(e)) {
@@ -62,5 +67,22 @@ export class StrucTSValidator {
                 });
             }
         });
+    }
+
+    // Check if cardinalities bounds are valid (e.g., [0..*] is valid, [2..0] is not),using the areCardinalitiesValid function
+    checkValidCardinality(model: Model, accept: ValidationAcceptor): void {
+        model.elements.forEach(e => {
+            if (isClass(e)) {
+                e.properties.forEach(a => {
+                    const lowerLimit = a.cardinality?.lower;
+                    const upperLimit = a.cardinality?.upper;
+                    if (lowerLimit && upperLimit) {
+                        if (!areCardinalitiesValid(lowerLimit.toString(), upperLimit.toString())) {
+                            accept('error', `Cardinality '${lowerLimit}..${upperLimit}' is not valid.`, {node: a, property: 'cardinality'});
+                        }
+                    }
+                });
+            }
+        })
     }
 }
