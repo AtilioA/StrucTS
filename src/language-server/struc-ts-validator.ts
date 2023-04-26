@@ -14,6 +14,21 @@ export function registerValidationChecks(services: StrucTsServices) {
     registry.register(checks, validator);
 }
 
+function areCardinalitiesValid(lowerLimit: string, upperLimit: string) {
+    // If lower limit is *, we cannot/should not have an upper limit. e.g. [*] is valid, [*..2] and [*..*] are not.
+    if (lowerLimit === "*" && upperLimit) {
+        return false;
+    }
+    // If lower limit is greater or equal to upper limit, the cardinality is invalid. e.g. [2..1] and [2..2] are invalid.
+    else if (lowerLimit >= upperLimit) {
+        return false;
+    }
+    // All other cases should be valid.
+    else {
+        return true;
+    }
+}
+
 /**
  * Implementation of custom validations.
  */
