@@ -63,9 +63,9 @@ DataType returns string:
 
 // Define the 'Cardinality' rule to represent cardinalities in the DSL
 Cardinality:
-    '[' lower=INT ('..' upper=UPPER_LIMIT)? ']';
+    '[' lower=CARDINALITY_LIMIT ('..' upper=CARDINALITY_LIMIT)? ']';
 
-UPPER_LIMIT returns string:
+CARDINALITY_LIMIT returns string:
     '*' | INT;
 
 // REVIEW: Check if this is needed
