@@ -2,7 +2,7 @@
 // This class abstracts the concept of an album, which has a title, an artist, and a list of songs. Each song is a reference to a Song object. This class uses the composed_of keyword, which indicates that the class is [...]
 class Album {
   attribute title: string;
-  attribute artist: Artist;
+  references artist: Artist;
   // Maybe this should not have a cardinality, since it is a composition.
   composed_of songs: Song[1..*];
 }
@@ -24,9 +24,4 @@ class Song {
 class Playlist {
   attribute name: string;
   references songs: Song[*];
-}
-
-// REVIEW: is this needed?
-association ManyToMany {
-  between: Playlist[*] and Song[*];
 }
