@@ -7,7 +7,7 @@ It is designed to simplify the process of creating structural models and generat
 ## Features
 
 - [x] Concise and expressive syntax for defining classes and their properties
-- [x] Abstracts common structural modeling concepts (e.g. associations, compositions)
+- [x] Common structural modeling concepts handling/abstraction (e.g. associations, compositions)
 - [x] Support for property cardinalities
 - [x] Built-in validation checks for semantic constraints such as unique class names, unique property names, valid cardinalities, etc.
 - [ ] Customizable code generation using the Factory pattern
@@ -22,8 +22,8 @@ It is designed to simplify the process of creating structural models and generat
 
 To use StrucTS, you'll need the following tools installed on your system:
 
-    [npm](https://www.npmjs.com/get-npm) (bundled with Node.js)
-    Visual Studio Code
+- [`npm`](https://www.npmjs.com/get-npm) (bundled with Node.js)
+- Visual Studio Code
 
 ### Installation
 
@@ -34,7 +34,7 @@ git clone https://github.com/AtilioA/StrucTS
 cd StrucTS
 ```
 
-### TODO
+### 🚧 TODO - Everything below this point is a work in progress
 
 Next, install the required dependencies:
 
@@ -65,8 +65,6 @@ class Member {
 }
 ```
 
-### TODO
-
 After defining your model in a `.sts` file, you can run the validation process to check for any semantic constraints violations:
 
 ...
@@ -81,9 +79,9 @@ The generated TypeScript code will be placed in the `generated/` directory and c
 
 ## Acknowledgments
 
-    [Langium](https://github.com/langium/langium): for providing the tools to build and parse the StrucTS grammar, and for providing the framework for code generation.
-    [TypeScript](https://github.com/microsoft/TypeScript): for serving as the target system for code generation.
-    ...
+- [Langium](https://github.com/langium/langium): for providing the tools to build and parse the StrucTS grammar, and for providing the framework for code generation.
+- [TypeScript](https://github.com/microsoft/TypeScript): for serving as the target system for code generation.
+- ...
 
 ## License
 
