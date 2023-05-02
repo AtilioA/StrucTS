@@ -1,5 +1,5 @@
 import { ValidationAcceptor, ValidationChecks } from 'langium';
-import { StrucTsAstType, Model, isClass } from './generated/ast';
+import { StrucTsAstType, Model, isClass, isReferencingProperty } from './generated/ast';
 import type { StrucTsServices } from './struc-ts-module';
 
 /**
@@ -12,7 +12,8 @@ export function registerValidationChecks(services: StrucTsServices) {
         Model: [
             validator.checkUniqueClassNames,
             validator.checkUniqueAttributeNames,
-            validator.checkValidCardinality
+            validator.checkValidCardinality,
+            validator.checkDirectSelfReferences
         ]
     };
     registry.register(checks, validator);
@@ -91,4 +92,20 @@ export class StrucTSValidator {
             }
         })
     }
+
+    checkDirectSelfReferences(model: Model, accept: ValidationAcceptor): void {
+        model.elements.forEach(e => {
+            if (isClass(e)) {
+                e.properties.forEach(a => {
+                    if (isReferencingProperty(a)) {
+                        const referencedClass = a.type?.class?.ref;
+                        if (referencedClass && referencedClass === e) {
+                            accept('error', `Class '${e.name}' has a direct self-reference.`, {node: a, property: "name"});
+                        }
+                    }
+                });
+            }
+        });
+    }
+
 }
