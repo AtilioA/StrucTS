@@ -18,19 +18,23 @@ export function registerValidationChecks(services: StrucTsServices) {
     registry.register(checks, validator);
 }
 
-function areCardinalitiesValid(lowerLimit: string, upperLimit: string): boolean {
+/**
+ *
+ * @param lowerLimit Lower limit of the cardinality
+ * @param upperLimit Upper limit of the cardinality
+ * @returns an object with 'valid' and 'message' properties. The valid property indicates if the cardinality is valid or not, and the message property provides the reason for the invalid cardinality.
+ */
+function areCardinalitiesValid(lowerLimit: string, upperLimit: string): {valid: boolean, message: string} {
     // If lower limit is *, we cannot/should not have an upper limit. e.g. [*] is valid, [*..2] and [*..*] are not.
     if (lowerLimit === "*" && upperLimit) {
-        return false;
-    }
-    // If both limits are numbers, check if lower limit is greater or equal to upper limit.
-    // If so, the cardinality is invalid. e.g. [2..1] and [2..2] are invalid.
-    else if (!isNaN(Number(lowerLimit)) && !isNaN(Number(upperLimit)) && Number(lowerLimit) >= Number(upperLimit)) {
-        return false;
-    }
+        return { valid: false, message: "Lower limit '*' should not have an upper limit." };
+        // If both limits are numbers, check if lower limit is greater or equal to upper limit.
+    } else if (!isNaN(Number(lowerLimit)) && !isNaN(Number(upperLimit)) && Number(lowerLimit) >= Number(upperLimit)) {
+        // If so, the cardinality is invalid. e.g. [2..1] and [2..2] are invalid.
+        return { valid: false, message: "Lower limit should be strictly less than upper limit." };
     // All other cases should be valid.
-    else {
-        return true;
+    } else {
+        return { valid: true, message: "" };
     }
 }
 
@@ -78,8 +82,9 @@ export class StrucTSValidator {
                     const lowerLimit = a.cardinality?.lower;
                     const upperLimit = a.cardinality?.upper;
                     if (lowerLimit && upperLimit) {
-                        if (!areCardinalitiesValid(lowerLimit.toString(), upperLimit.toString())) {
-                            accept('error', `Cardinality '${lowerLimit}..${upperLimit}' is not valid.`, {node: a, property: 'cardinality'});
+                        const validationResult = areCardinalitiesValid(lowerLimit.toString(), upperLimit.toString());
+                        if (!validationResult.valid) {
+                            accept('error', `Invalid cardinality '${lowerLimit}..${upperLimit}': ${validationResult.message}`, {node: a, property: 'cardinality'});
                         }
                     }
                 });
