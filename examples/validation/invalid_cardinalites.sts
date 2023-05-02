@@ -1,0 +1,31 @@
+class A {
+    attribute x: number;
+}
+
+class B {
+    composed_of a: A[3..1]; // lower limit is greater than upper limit
+}
+
+class C {
+    attribute x: number;
+}
+
+class D {
+    composed_of a: A[2..2]; // lower limit is equal to upper limit
+}
+
+class E {
+    attribute x: number;
+}
+
+class F {
+    composed_of a: A[*..5]; // lower limit is '*' and upper limit is specified
+}
+
+class G {
+    attribute x: number;
+}
+
+class H {
+    composed_of a: A[*..*]; // both lower and upper limits are '*'
+}

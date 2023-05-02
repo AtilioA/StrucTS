@@ -1,0 +1,9 @@
+class A {
+    attribute x: number;
+    attribute y: string;
+}
+
+class B {
+    attribute y: string;
+    attribute y: number;
+}

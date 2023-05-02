@@ -1,0 +1,4 @@
+class A {
+    references a: A;
+    attribute b: number;
+}
