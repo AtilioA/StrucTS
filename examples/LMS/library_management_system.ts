@@ -85,6 +85,17 @@ export class Library {
     this._members = new CustomCollection<Member>(1, null);
   }
 
+  // The destroy method handles the destruction of objects that compose it, i.e. Book and Member instances
+  destroy(): void {
+    this._books.getItems().forEach((book) => {
+      book.destroy();
+    });
+
+    this._members.getItems().forEach((member) => {
+      member.destroy();
+    });
+  }
+
   addBook(book: Book): boolean {
     return this._books.add(book);
   }
@@ -122,17 +133,29 @@ export class Book {
     this.isbn = isbn;
     this.borrowedBy = borrowedBy || null;
   }
+
+  destroy(): void {
+    // Add any cleanup logic specific to the Book class here
+    console.log(`Book instance '${this.title}' (${this.isbn}) is being destroyed.`);
+  }
 }
 
 export class Member {
   name: string;
+  isActive: boolean;
   membershipID: string;
   private _borrowedBooks: CustomCollection<Book>;
 
   constructor(name: string, membershipID: string) {
     this.name = name;
+    this.isActive = true;
     this.membershipID = membershipID;
     this._borrowedBooks = new CustomCollection<Book>(0, 2);
+  }
+
+  destroy(): void {
+    // Add any cleanup logic specific to the Member class here
+    console.log(`Member instance '${this.name}' (${this.membershipID}) is being destroyed.`)
   }
 
   borrowBook(book: Book): boolean {

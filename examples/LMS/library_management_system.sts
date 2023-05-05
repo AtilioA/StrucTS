@@ -4,7 +4,7 @@
 class Library {
   attribute name: string;
   composed_of books: Book[1..*];
-  composed_of members: Member[1..*];
+  composed_of members: Member[*..0];
 }
 
 // This class abstracts the concept of a Book, which has a title, an author, an ISBN, and a reference to the Member who borrowed it (if any).
@@ -18,6 +18,7 @@ class Book {
 // This class abstracts the concept of a Member, which has a name, a membershipID, and a reference to the Books they have borrowed (if any).
 class Member {
   attribute name: string;
+  attribute isActive: boolean;
   attribute membershipID: string;
   references borrowedBooks: Book[0..*];
 }
