@@ -4,9 +4,9 @@ import path from 'path';
 import { Model } from '../language-server/generated/ast';
 import { extractDestinationAndName } from './cli-util';
 
-export function generateJavaScript(model: Model, filePath: string, destination: string | undefined): string {
+export function generateTypeScript(model: Model, filePath: string, destination: string | undefined): string {
     const data = extractDestinationAndName(filePath, destination);
-    const generatedFilePath = `${path.join(data.destination, data.name)}.js`;
+    const generatedFilePath = `${path.join(data.destination, data.name)}.ts`;
 
     const fileNode = new CompositeGeneratorNode();
     fileNode.append('"use strict";', NL, NL);
