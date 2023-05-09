@@ -4,7 +4,7 @@
 class Library {
   attribute name: string;
   composed_of books: Book[1..*];
-  composed_of members: Member[*..0];
+  composed_of members: Member[1..*];
 }
 
 // This class abstracts the concept of a Book, which has a title, an author, an ISBN, and a reference to the Member who borrowed it (if any).
