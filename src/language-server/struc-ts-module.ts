@@ -3,14 +3,17 @@ import {
     LangiumServices, LangiumSharedServices, Module, PartialLangiumServices
 } from 'langium';
 import { StrucTsGeneratedModule, StrucTsGeneratedSharedModule } from './generated/module';
-import { StrucTSValidator, registerValidationChecks } from './struc-ts-validator';
+import { registerValidationChecks } from './struc-ts-validator';
+import { StrucTSClassValidator } from './validators/class_validators';
+import { StrucTSModelValidator } from './validators/model_validators';
 
 /**
  * Declaration of custom services - add your own service classes here.
  */
 export type StrucTsAddedServices = {
     validation: {
-        StrucTSValidator: StrucTSValidator
+        StrucTSModelValidator: StrucTSModelValidator,
+        StrucTSClassValidator: StrucTSClassValidator
     }
 }
 
@@ -27,7 +30,8 @@ export type StrucTsServices = LangiumServices & StrucTsAddedServices
  */
 export const StrucTsModule: Module<StrucTsServices, PartialLangiumServices & StrucTsAddedServices> = {
     validation: {
-        StrucTSValidator: () => new StrucTSValidator()
+        StrucTSModelValidator: () => new StrucTSModelValidator(),
+        StrucTSClassValidator: () => new StrucTSClassValidator()
     }
 };
 
