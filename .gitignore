@@ -106,6 +106,7 @@ dist
 # Langium
 /bin/
 /out/
+/outputs/
 generated/
 examples/*.js
 *tmLanguage.json
