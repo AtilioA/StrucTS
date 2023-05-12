@@ -29,7 +29,7 @@ export default function(): void {
     program
         .command('generate')
         .argument('<file>', `source file (possible file extensions: ${fileExtensions})`)
-        .option('-d, --destination <dir>', 'destination directory of generating')
+        .option('-d, --destination <dir>', 'output directory for the TypeScript files')
         .description('generates TypeScript code from a StrucTS input file')
         .action(generateAction);
 
