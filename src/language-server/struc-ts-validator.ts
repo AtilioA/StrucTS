@@ -8,15 +8,27 @@ import type { StrucTsServices } from './struc-ts-module';
 export function registerValidationChecks(services: StrucTsServices) {
     const registry = services.validation.ValidationRegistry;
     const validator = services.validation.StrucTSValidator;
-    const checks: ValidationChecks<StrucTsAstType> = {
+
+    // TODO: Whenever appropriate, use Class instead of Model, and remove isClass checks inside the validation functions
+    const modelChecks: ValidationChecks<StrucTsAstType> = {
         Model: [
             validator.checkUniqueClassNames,
             validator.checkUniqueAttributeNames,
             validator.checkValidCardinality,
-            validator.checkDirectSelfReferences
+            validator.checkDirectSelfReferences,
         ]
     };
-    registry.register(checks, validator);
+
+    const classChecks: ValidationChecks<StrucTsAstType> = {
+        Class: [
+            validator.checkUniqueMethodNames,
+            validator.checkMethodNameNotClassName,
+            validator.checkMethodNameNotPropertyName,
+            validator.checkUniqueParameterNames
+    ]};
+
+    registry.register(modelChecks, validator);
+    registry.register(classChecks, validator);
 }
 
 /**
@@ -106,12 +118,63 @@ export class StrucTSValidator {
                         const referencedClass = statement.type?.class?.ref;
                         if (referencedClass && referencedClass === e) {
                             accept('error', `Class '${e.name}' has a direct self-reference.`, {node: statement, property: "name"});
-                            accept('error', `Class '${e.name}' has a direct self-reference.`, {node: a, property: "name"});
                         }
-                    }
+                    }}
                 });
             }
         });
     }
 
+    checkUniqueMethodNames(classNode: Class, accept: ValidationAcceptor): void {
+        const methodNames = new Set<string>();
+        for (const statement of classNode.statements) {
+            if (isMethod(statement)) {
+                const name = statement.name;
+                if (methodNames.has(name)) {
+                    accept('error', `Duplicate method name '${name}'.`, {node: statement, property: 'name'});
+                } else {
+                    methodNames.add(name);
+                }
+            }
+        }
+    }
+
+    checkMethodNameNotClassName(classNode: Class, accept: ValidationAcceptor): void {
+        const className = classNode.name;
+        for (const statement of classNode.statements) {
+            if (isMethod(statement) && statement.name === className) {
+                accept('error', `Method name '${className}' should not be the same as the Class name.`, {node: statement, property: 'name'});
+            }
+        }
+    }
+
+    checkMethodNameNotPropertyName(classNode: Class, accept: ValidationAcceptor): void {
+        const propertyNames = new Set<string>();
+        for (const statement of classNode.statements) {
+            if (isProperty(statement)) {
+                propertyNames.add(statement.name);
+            } else if (isMethod(statement)) {
+                const name = statement.name;
+                if (propertyNames.has(name)) {
+                    accept('error', `Method '${name}' should not have the same name as another property in the same class.`, {node: statement, property: 'name'});
+                }
+            }
+        }
+    }
+
+    checkUniqueParameterNames(classNode: Class, accept: ValidationAcceptor): void {
+        classNode.statements.forEach(statement => {
+            if (isMethod(statement)) {
+                const method = statement;
+                const parameterNames = new Set();
+                method.parameters.forEach(parameter => {
+                    if (parameterNames.has(parameter.name)) {
+                        accept('error', `Duplicate parameter name '${parameter.name}' in method '${method.name}'.`, {node: parameter, property: 'name'});
+                    } else {
+                        parameterNames.add(parameter.name);
+                    }
+                });
+            }
+        });
+    }
 }
