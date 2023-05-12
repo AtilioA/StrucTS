@@ -1,0 +1,4 @@
+class MyClass {
+    attribute myProperty: string;
+    method myProperty();
+}

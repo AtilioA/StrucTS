@@ -1,0 +1,3 @@
+class MyClass {
+    method doSomething(param1: string, param1: number);
+}
