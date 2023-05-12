@@ -1,5 +1,5 @@
 import { ValidationAcceptor, ValidationChecks } from 'langium';
-import { StrucTsAstType, Model, isClass, isReferencingProperty } from './generated/ast';
+import { StrucTsAstType, Model, isClass, isReferencingProperty, Class, isProperty, isMethod} from './generated/ast';
 import type { StrucTsServices } from './struc-ts-module';
 
 /**
@@ -64,30 +64,34 @@ export class StrucTSValidator {
             if (isClass(e)) {
                 // Only store attribute names for the current class; otherwise, attributes of different classes would be considered non-unique
                 const reportedAttributeNames = new Set();
-                e.properties.forEach(a => {
-                    const attributeName = a.name;
+                e.statements.forEach(statement => {
+                    if (isProperty(statement)) {
+                    const attributeName = statement.name;
                     if (reportedAttributeNames.has(attributeName)) {
-                        accept('error', `Attribute has non-unique name '${attributeName}'.`, {node: a, property: 'name'});
+                        accept('error', `Attribute has non-unique name '${attributeName}'.`, {node: statement, property: 'name'});
                     }
                     reportedAttributeNames.add(attributeName);
+                }
                 });
             }
         });
     }
 
+
     // Check if cardinalities bounds are valid (e.g., [0..*] is valid, [2..0] is not),using the areCardinalitiesValid function
     checkValidCardinality(model: Model, accept: ValidationAcceptor): void {
         model.elements.forEach(e => {
             if (isClass(e)) {
-                e.properties.forEach(a => {
-                    const lowerLimit = a.cardinality?.lower;
-                    const upperLimit = a.cardinality?.upper;
+                e.statements.forEach(statement => {
+                    if (isProperty(statement)) {
+                    const lowerLimit = statement.cardinality?.lower;
+                    const upperLimit = statement.cardinality?.upper;
                     if (lowerLimit && upperLimit) {
                         const validationResult = areCardinalitiesValid(lowerLimit.toString(), upperLimit.toString());
                         if (!validationResult.valid) {
-                            accept('error', `Invalid cardinality '${lowerLimit}..${upperLimit}': ${validationResult.message}`, {node: a, property: 'cardinality'});
+                            accept('error', `Invalid cardinality '${lowerLimit}..${upperLimit}': ${validationResult.message}`, {node: statement, property: 'cardinality'});
                         }
-                    }
+                    }}
                 });
             }
         })
@@ -96,10 +100,12 @@ export class StrucTSValidator {
     checkDirectSelfReferences(model: Model, accept: ValidationAcceptor): void {
         model.elements.forEach(e => {
             if (isClass(e)) {
-                e.properties.forEach(a => {
-                    if (isReferencingProperty(a)) {
-                        const referencedClass = a.type?.class?.ref;
+                e.statements.forEach(statement => {
+                    if (isProperty(statement)) {
+                    if (isReferencingProperty(statement)) {
+                        const referencedClass = statement.type?.class?.ref;
                         if (referencedClass && referencedClass === e) {
+                            accept('error', `Class '${e.name}' has a direct self-reference.`, {node: statement, property: "name"});
                             accept('error', `Class '${e.name}' has a direct self-reference.`, {node: a, property: "name"});
                         }
                     }

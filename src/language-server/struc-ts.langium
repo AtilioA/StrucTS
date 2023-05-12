@@ -13,12 +13,17 @@ Element:
 // Define the 'Class' rule to capture class definitions
 Class:
     'class' name=ID ('implements' implemented+=Interface)? '{'
-    properties+=Property* '}';
+    statements+=ClassElement* '}';
 
-// Define a 'ClassReference' rule to reference other classes in the DSL
-ClassReference:
-    class=[Class];
+ClassElement:
+    Property | Method;
 
+/* SECTION: Class Methods */
+Method:
+    'method' name=ID '(' (parameters+=Parameter (',' parameters+=Parameter)*)? ')' ';';
+
+Parameter:
+    name=ID (':' type=Type)?;
 
 /* SECTION: Class Interfaces  */
 // Define a generic 'Interface' rule to capture interfaces, like 'FactoryInterface'
@@ -31,14 +36,18 @@ FactoryInterface:
     // REVIEW: This might be a hack to have 'Factory' as a keyword
     STRING='Factory';
 
-
 /* SECTION: Class Properties */
 // Define the 'Property' rule to capture the properties of a class. It can be a statement for composition, attribute, or reference.
+
 Property:
     ReferencingProperty | AttributeProperty;
 
 ReferencingProperty:
     ComposedProperty | ReferenceProperty;
+
+// Define a 'ClassReference' rule to reference other classes in the DSL
+ClassReference:
+    class=[Class];
 
 ComposedProperty:
     'composed_of' name=ID ':' type=ClassReference cardinality=Cardinality? ';';
@@ -59,7 +68,7 @@ Type:
 
 // Define the 'DataType' rule for primitive data types. Currently, only string, number and boolean are supported.
 DataType returns string:
-    'string' | 'number' | 'boolean';
+    'string' | 'number' | 'boolean' | 'any';
 
 // Define the 'Cardinality' rule to represent cardinalities in the DSL
 Cardinality:
@@ -67,6 +76,7 @@ Cardinality:
 
 CARDINALITY_LIMIT returns string:
     '*' | INT;
+
 
 // REVIEW: Check if this is needed
 // // Define the 'Association' rule to capture associations between classes

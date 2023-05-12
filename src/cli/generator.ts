@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { GeneratorNode, CompositeGeneratorNode, NL, toString } from 'langium';
 import path from 'path';
-import { Class, Model, isClass } from '../language-server/generated/ast';
+import { Class, Model, isClass, isProperty } from '../language-server/generated/ast';
 import { extractDestinationAndName } from './cli-util';
 
 // Stub generateProperty function
@@ -16,9 +16,11 @@ export function generateClass(cls: Class): CompositeGeneratorNode {
   classNode.append("export class ", cls.name, " {", NL);
 
   // Iterate through the properties of the class and generate code for each property
-  for (const property of cls.properties) {
-    // const propertyNode = generateProperty(property);
-    classNode.append(property.name, NL);
+  for (const statement of cls.statements) {
+    if (isProperty(statement)) {
+        // const propertyNode = generateProperty(statement);
+        classNode.append(statement.name, NL);
+    }
   }
 
   // Class 'footer'
