@@ -14,6 +14,7 @@ export function registerValidationChecks(services: StrucTsServices) {
     const modelChecks: ValidationChecks<StrucTsAstType> = {
         Model: [
             modelValidator.checkUniqueClassNames,
+            modelValidator.checkTypeScriptReservedKeywords
         ]
     };
 

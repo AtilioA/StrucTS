@@ -69,7 +69,7 @@ export class StrucTSClassValidator {
       const className = classNode.name;
       for (const statement of classNode.statements) {
           if (isMethod(statement) && statement.name === className) {
-              accept('error', `Method name '${className}' should not be the same as the Class namclassNode.`, {node: statement, property: 'name'});
+              accept('error', `Method name '${className}' should not be the same as the Class name.`, {node: statement, property: 'name'});
           }
       }
   }
@@ -83,13 +83,12 @@ export class StrucTSClassValidator {
           } else if (isMethod(statement)) {
               const name = statement.name;
               if (propertyNames.has(name)) {
-                  accept('error', `Method '${name}' should not have the same name as another property in the same classNode.`, {node: statement, property: 'name'});
+                  accept('error', `Method '${name}' should not have the same name as another property in the same class.`, {node: statement, property: 'name'});
               }
           }
       }
   }
 
-  // NOTE: could be modularized into a separate validator (e.g., StrucTSMethodValidator)
   // Check if the parameter names are unique within a method
   checkUniqueParameterNames(classNode: Class, accept: ValidationAcceptor): void {
       classNode.statements.forEach(statement => {

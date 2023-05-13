@@ -1,0 +1,4 @@
+class console {
+    attribute console: string;
+    method console(console: any);
+}

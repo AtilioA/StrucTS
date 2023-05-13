@@ -1,5 +1,6 @@
 import { ValidationAcceptor } from "langium";
-import { Model, isClass } from "../generated/ast";
+import { Model, isClass, isMethod, isProperty } from "../generated/ast";
+import { reservedKeywords } from "./utils";
 
 /**
  * Implementation of validations for the whole model.
@@ -18,5 +19,50 @@ export class StrucTSModelValidator {
               reportedClassNames.add(className);
           }
       });
+  }
+
+  // Validation function for checking TypeScript reserved keywords
+  checkTypeScriptReservedKeywords(model: Model, accept: ValidationAcceptor): void {
+    model.elements.forEach(e => {
+      if (isClass(e)) {
+        const className = e.name;
+        if (reservedKeywords.has(className)) {
+          accept('error', `Class name '${className}' is a reserved keyword in TypeScript.`, {node: e, property: 'name'});
+        }
+      }
+
+      model.elements.forEach(e => {
+        if (isClass(e)) {
+          const className = e.name;
+
+          if (reservedKeywords.has(className)) {
+            accept('error', `Class name '${className}' is a reserved keyword in TypeScript.`, {node: e, property: 'name'});
+          }
+
+          e.statements.forEach(s => {
+            if (isProperty(s)) {
+              const propertyName = s.name;
+              if (reservedKeywords.has(propertyName)) {
+                accept('error', `Property name '${propertyName}' in class '${className}' is a reserved keyword in TypeScript.`, {node: s, property: 'name'});
+              }
+            } else if (isMethod(s)) {
+              const methodName = s.name;
+
+              if (reservedKeywords.has(methodName)) {
+                accept('error', `Method name '${methodName}' in class '${className}' is a reserved keyword in TypeScript.`, {node: s, property: 'name'});
+              }
+
+              s.parameters.forEach(p => {
+                const paramName = p.name;
+
+                if (reservedKeywords.has(paramName)) {
+                  accept('error', `Parameter name '${paramName}' in method '${methodName}' of class '${className}' is a reserved keyword in TypeScript.`, {node: p, property: 'name'});
+                }
+              });
+            }
+          });
+        }
+      });
+    });
   }
 }
