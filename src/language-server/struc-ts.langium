@@ -34,7 +34,7 @@ Interface:
 // Define the 'FactoryInterface' rule for capturing factory implementations
 FactoryInterface:
     // REVIEW: This might be a hack to have 'Factory' as a keyword
-    STRING='Factory';
+    name='Factory';
 
 /* SECTION: Class Properties */
 // Define the 'Property' rule to capture the properties of a class. It can be a statement for composition, attribute, or reference.

@@ -1,8 +1,9 @@
 import fs from 'fs';
-import { GeneratorNode, CompositeGeneratorNode, NL, toString } from 'langium';
 import path from 'path';
+import { GeneratorNode, CompositeGeneratorNode, NL, toString } from 'langium';
 import { Class, Model, isClass, isProperty } from '../language-server/generated/ast';
 import { extractDestinationAndName } from './cli-util';
+import { appendImports } from './utils/fs-utils';
 
 // Stub generateProperty function
 export function generateProperty(property: unknown): GeneratorNode {
@@ -29,9 +30,12 @@ export function generateClass(cls: Class): CompositeGeneratorNode {
   return classNode;
 }
 
+
 export function generateTypeScript(model: Model, filePath: string, destination: string | undefined): string {
     const fileNode = new CompositeGeneratorNode();
     fileNode.append('"use strict";', NL, NL);
+
+    appendImports(fileNode, model, destination);
 
     // Iterate through the top-level elements in the Model (AST)
     for (const element of model.elements) {
