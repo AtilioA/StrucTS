@@ -47,9 +47,9 @@
         "vscode:prepublish": "npm run build && npm run lint",
         "build": "tsc -b tsconfig.json",
         "watch": "tsc -b tsconfig.json --watch",
-        "lint": "eslint src --ext ts",
         "langium:generate": "langium generate",
-        "langium:watch": "langium generate --watch"
+        "langium:watch": "langium generate --watch",
+        "lint": "xo --fix --ext .ts"
     },
     "dependencies": {
         "chalk": "~4.1.2",
@@ -65,9 +65,29 @@
         "@types/vscode": "~1.67.0",
         "@typescript-eslint/eslint-plugin": "~5.51.0",
         "@typescript-eslint/parser": "~5.51.0",
-        "eslint": "~8.33.0",
         "langium-cli": "~1.1.0",
         "typescript": "~4.9.5",
         "xo": "^0.54.2"
+    },
+    "xo": {
+        "rules": {
+            "@typescript-eslint/indent": "off",
+            "no-warning-comments": "off",
+            "no-else-return": "off",
+            "@typescript-eslint/ban-types": "off",
+            "n/prefer-global/process": "off",
+            "n/file-extension-in-import": "off",
+            "unicorn/no-process-exit": "off",
+            "unicorn/no-await-expression-member": "off",
+            "@typescript-eslint/restrict-template-expressions": "off",
+            "import/extensions": "off",
+            "unicorn/filename-case": "off",
+            "@typescript-eslint/object-curly-spacing": [
+                "error",
+                "always"
+            ],
+            "capitalized-comments": "off",
+            "@typescript-eslint/naming-convention": "off"
+        }
     }
 }

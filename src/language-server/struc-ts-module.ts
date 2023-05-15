@@ -1,38 +1,50 @@
 import {
-    createDefaultModule, createDefaultSharedModule, DefaultSharedModuleContext, inject,
-    LangiumServices, LangiumSharedServices, Module, PartialLangiumServices
+	createDefaultModule,
+	createDefaultSharedModule,
+	type DefaultSharedModuleContext,
+	inject,
+	type LangiumServices,
+	type LangiumSharedServices,
+	type Module,
+	type PartialLangiumServices,
 } from 'langium';
-import { StrucTsGeneratedModule, StrucTsGeneratedSharedModule } from './generated/module';
-import { registerValidationChecks } from './struc-ts-validator';
-import { StrucTSClassValidator } from './validators/class_validators';
-import { StrucTSModelValidator } from './validators/model_validators';
+import {
+	StrucTsGeneratedModule,
+	StrucTsGeneratedSharedModule,
+} from './generated/module';
+import {registerValidationChecks} from './struc-ts-validator';
+import {StrucTSClassValidator} from './validators/class_validators';
+import {StrucTSModelValidator} from './validators/model_validators';
 
 /**
  * Declaration of custom services - add your own service classes here.
  */
 export type StrucTsAddedServices = {
-    validation: {
-        StrucTSModelValidator: StrucTSModelValidator,
-        StrucTSClassValidator: StrucTSClassValidator
-    }
-}
+	validation: {
+		StrucTSModelValidator: StrucTSModelValidator;
+		StrucTSClassValidator: StrucTSClassValidator;
+	};
+};
 
 /**
  * Union of Langium default services and your custom services - use this as constructor parameter
  * of custom service classes.
  */
-export type StrucTsServices = LangiumServices & StrucTsAddedServices
+export type StrucTsServices = LangiumServices & StrucTsAddedServices;
 
 /**
  * Dependency injection module that overrides Langium default services and contributes the
  * declared custom services. The Langium defaults can be partially specified to override only
  * selected services, while the custom services must be fully specified.
  */
-export const StrucTsModule: Module<StrucTsServices, PartialLangiumServices & StrucTsAddedServices> = {
-    validation: {
-        StrucTSModelValidator: () => new StrucTSModelValidator(),
-        StrucTSClassValidator: () => new StrucTSClassValidator()
-    }
+export const StrucTsModule: Module<
+StrucTsServices,
+PartialLangiumServices & StrucTsAddedServices
+> = {
+	validation: {
+		StrucTSModelValidator: () => new StrucTSModelValidator(),
+		StrucTSClassValidator: () => new StrucTSClassValidator(),
+	},
 };
 
 /**
@@ -51,19 +63,19 @@ export const StrucTsModule: Module<StrucTsServices, PartialLangiumServices & Str
  * @returns An object wrapping the shared services and the language-specific services
  */
 export function createStrucTsServices(context: DefaultSharedModuleContext): {
-    shared: LangiumSharedServices,
-    StrucTs: StrucTsServices
+	shared: LangiumSharedServices;
+	StrucTs: StrucTsServices;
 } {
-    const shared = inject(
-        createDefaultSharedModule(context),
-        StrucTsGeneratedSharedModule
-    );
-    const StrucTs = inject(
-        createDefaultModule({ shared }),
-        StrucTsGeneratedModule,
-        StrucTsModule
-    );
-    shared.ServiceRegistry.register(StrucTs);
-    registerValidationChecks(StrucTs);
-    return { shared, StrucTs };
+	const shared = inject(
+		createDefaultSharedModule(context),
+		StrucTsGeneratedSharedModule,
+	);
+	const StrucTs = inject(
+		createDefaultModule({shared}),
+		StrucTsGeneratedModule,
+		StrucTsModule,
+	);
+	shared.ServiceRegistry.register(StrucTs);
+	registerValidationChecks(StrucTs);
+	return {shared, StrucTs};
 }
