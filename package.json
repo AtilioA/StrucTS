@@ -10,17 +10,26 @@
         "Programming Languages"
     ],
     "contributes": {
-        "languages": [{
-            "id": "struc-ts",
-            "aliases": ["StrucTS", "struc-ts"],
-            "extensions": [".sts"],
-            "configuration": "./language-configuration.json"
-        }],
-        "grammars": [{
-            "language": "struc-ts",
-            "scopeName": "source.struc-ts",
-            "path": "./syntaxes/struc-ts.tmLanguage.json"
-        }]
+        "languages": [
+            {
+                "id": "struc-ts",
+                "aliases": [
+                    "StrucTS",
+                    "struc-ts"
+                ],
+                "extensions": [
+                    ".sts"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "struc-ts",
+                "scopeName": "source.struc-ts",
+                "path": "./syntaxes/struc-ts.tmLanguage.json"
+            }
+        ]
     },
     "activationEvents": [
         "onLanguage:struc-ts"
@@ -43,8 +52,8 @@
         "langium:watch": "langium generate --watch"
     },
     "dependencies": {
-        "chevrotain": "~10.4.2",
         "chalk": "~4.1.2",
+        "chevrotain": "~10.4.2",
         "commander": "~10.0.0",
         "langium": "~1.1.0",
         "vscode-languageclient": "~8.0.2",
@@ -58,6 +67,7 @@
         "@typescript-eslint/parser": "~5.51.0",
         "eslint": "~8.33.0",
         "langium-cli": "~1.1.0",
-        "typescript": "~4.9.5"
+        "typescript": "~4.9.5",
+        "xo": "^0.54.2"
     }
 }
