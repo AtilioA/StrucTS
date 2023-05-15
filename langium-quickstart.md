@@ -11,7 +11,7 @@ This folder contains all necessary files for your language extension.
  * `src/language-server/struc-ts-module.ts` - the dependency injection module of your language implementation. Use this to register overridden and added services.
  * `src/language-server/struc-ts-validator.ts` - an example validator. You should change it to reflect the semantics of your language.
  * `src/cli/index.ts` - the entry point of the command line interface (CLI) of your language.
- * `src/cli/generator.ts` - the code generator used by the CLI to write output files from DSL documents.
+ * `src/cli/typescript_generator.ts` - the code generator used by the CLI to write TypeScript output files from DSL documents.
  * `src/cli/cli-util.ts` - utility code for the CLI.
 
 ## Get up and running straight away
