@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { execSync } from 'node:child_process';
 import { type GeneratorNode, CompositeGeneratorNode, NL, toString, IndentNode } from 'langium';
 import { type Class, type Model, type Property, isClass, isProperty, type ComposedProperty, type AttributeProperty, type ReferenceProperty, isComposedProperty, isAttributeProperty, isReferenceProperty } from '../language-server/generated/ast';
 import { extractDestinationAndName } from './cli-util';
@@ -151,5 +152,18 @@ export function generateCommands(model: Model, filePath: string, destination: st
 	const result = generateTypeScript(model, filePath, destination);
 
 	fs.writeFileSync(generatedFilePath, result);
+
+	const temporaryIgnorePath = path.join(__dirname, 'temp.eslintignore');
+	fs.writeFileSync(temporaryIgnorePath, ''); // Write an empty .eslintignore file
+
+	// Run ESLint at the end of the generation process
+	try {
+		execSync(`npx xo ${data.destination} --fix --space --ignore-path=${temporaryIgnorePath}`, { stdio: 'inherit' });
+	} catch (error) {
+		console.error('ESLint execution failed:', error);
+	} finally {
+		fs.unlinkSync(temporaryIgnorePath); // Delete the temporary .eslintignore file
+	}
+
 	return generatedFilePath;
 }

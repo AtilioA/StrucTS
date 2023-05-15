@@ -91,6 +91,10 @@
             "max-depth": [
                 "error",
                 8
+            ],
+            "indent": [
+                "error",
+                "tab"
             ]
         }
     }
