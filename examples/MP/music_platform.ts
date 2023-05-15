@@ -103,16 +103,14 @@ export class Song {
 /**
  * Class for the AlbumFactory. It is responsible for creating new Album instances.
  */
-class AlbumFactory {
+class ArtistFactory {
   /**
-   * Creates an album instance
-   * @param {string} title - The album title
-   * @param {Artist} artist - The artist who created the album
-   * @returns {Album} - The new album
+   * Creates an artist
+   * @param {string} name - The name of the artist
    */
 
-  createAlbum(title: string, artist: Artist): Album {
-    return new Album(title, artist);
+  createArtist(title: string): Artist {
+    return new Artist(title);
   }
 }
 
