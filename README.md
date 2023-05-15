@@ -12,7 +12,7 @@ It is designed to simplify the process of creating structural models and generat
 - [x] Built-in validation checks for semantic constraints such as unique class names, unique property names, valid cardinalities, etc.
 - [ ] Customizable code generation using the Factory pattern
   - [x] Front-end (parsing)
-  - [ ] Back-end (code generation)
+  - [x] Back-end (code generation)
 - [ ] Generates TypeScript code
   - [ ] Idiomatic?
 
@@ -44,7 +44,13 @@ npm install
 
 ### Usage
 
-To use StrucTS, create a .sts file with your desired class and property definitions. The file should follow the StrucTS syntax. For example, we could create a `library.sts` file:
+First, generate code for the grammar (AST, etc) with Langium and build the validators and generators:
+
+```bash
+langium generate && npm run build
+```
+
+Then, to use StrucTS, create a .sts file with your desired class and property definitions. The file should follow the StrucTS syntax. For example, we could create a `library.sts` file:
 
 ```ts
 class Library {
@@ -65,17 +71,20 @@ class Member {
 }
 ```
 
-After defining your model in a `.sts` file, you can run the validation process to check for any semantic constraints violations:
-
-...
+After defining your model in a `.sts` file, you can use the extension to check for any semantic constraints violations. Either get the extension from the VS Code Marketplace (`...`) or press F5 to run the extension in debug mode, then open the `.sts`.
 
 Run the following command to generate TypeScript code from your StrucTS model:
 
 ```bash
-npm run generate
+bin/cli generate <file>
 ```
 
-The generated TypeScript code will be placed in the `generated/` directory and can be used on its own.
+The CLI will inform you of any errors in your model.
+<br/>
+If there are none, the generated TypeScript code will be placed in the `generated/` directory by default, and can already be used on its own.
+<br/>The output is linted using ESLint and `xo`, and you can run `npm run lint` to check for any linting errors. However, note that ignored directories (such as `generated/`) cannot linted.
+
+## 🚧 TODO - Visualization with GraphViz (.dot)
 
 ## Acknowledgments
 
