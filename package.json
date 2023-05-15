@@ -87,7 +87,11 @@
                 "always"
             ],
             "capitalized-comments": "off",
-            "@typescript-eslint/naming-convention": "off"
+            "@typescript-eslint/naming-convention": "off",
+            "max-depth": [
+                "error",
+                8
+            ]
         }
     }
 }

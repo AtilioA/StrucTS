@@ -12,9 +12,9 @@ import {
 	StrucTsGeneratedModule,
 	StrucTsGeneratedSharedModule,
 } from './generated/module';
-import {registerValidationChecks} from './struc-ts-validator';
-import {StrucTSClassValidator} from './validators/class_validators';
-import {StrucTSModelValidator} from './validators/model_validators';
+import { registerValidationChecks } from './struc-ts-validator';
+import { StrucTSClassValidator } from './validators/class_validators';
+import { StrucTSModelValidator } from './validators/model_validators';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -71,11 +71,11 @@ export function createStrucTsServices(context: DefaultSharedModuleContext): {
 		StrucTsGeneratedSharedModule,
 	);
 	const StrucTs = inject(
-		createDefaultModule({shared}),
+		createDefaultModule({ shared }),
 		StrucTsGeneratedModule,
 		StrucTsModule,
 	);
 	shared.ServiceRegistry.register(StrucTs);
 	registerValidationChecks(StrucTs);
-	return {shared, StrucTs};
+	return { shared, StrucTs };
 }

@@ -1,6 +1,6 @@
-import {type ValidationAcceptor} from 'langium';
-import {isProperty, type Class, isMethod, isReferenceProperty} from '../generated/ast';
-import {areCardinalitiesValid} from './utils';
+import { type ValidationAcceptor } from 'langium';
+import { isProperty, type Class, isMethod, isReferenceProperty } from '../generated/ast';
+import { areCardinalitiesValid } from './utils';
 
 /**
  * Implementation of validations for the Class node.
@@ -14,7 +14,7 @@ export class StrucTSClassValidator {
 			if (isProperty(statement)) {
 				const attributeName = statement.name;
 				if (reportedAttributeNames.has(attributeName)) {
-					accept('error', `Attribute has non-unique name '${attributeName}'.`, {node: statement, property: 'name'});
+					accept('error', `Attribute has non-unique name '${attributeName}'.`, { node: statement, property: 'name' });
 				}
 
 				reportedAttributeNames.add(attributeName);
@@ -31,7 +31,7 @@ export class StrucTSClassValidator {
 				if (lowerLimit && upperLimit) {
 					const validationResult = areCardinalitiesValid(lowerLimit.toString(), upperLimit.toString());
 					if (!validationResult.valid) {
-						accept('error', `Invalid cardinality '${lowerLimit}..${upperLimit}': ${validationResult.message}`, {node: statement, property: 'cardinality'});
+						accept('error', `Invalid cardinality '${lowerLimit}..${upperLimit}': ${validationResult.message}`, { node: statement, property: 'cardinality' });
 					}
 				}
 			}
@@ -44,7 +44,7 @@ export class StrucTSClassValidator {
 			if (isProperty(statement) && isReferenceProperty(statement)) {
 				const referencedClass = statement.type?.class?.ref;
 				if (referencedClass && referencedClass === classNode) {
-					accept('error', `Class '${classNode.name}' has a direct self-reference.`, {node: statement, property: 'name'});
+					accept('error', `Class '${classNode.name}' has a direct self-reference.`, { node: statement, property: 'name' });
 				}
 			}
 		}
@@ -57,7 +57,7 @@ export class StrucTSClassValidator {
 			if (isMethod(statement)) {
 				const name = statement.name;
 				if (methodNames.has(name)) {
-					accept('error', `Duplicate method name '${name}'.`, {node: statement, property: 'name'});
+					accept('error', `Duplicate method name '${name}'.`, { node: statement, property: 'name' });
 				} else {
 					methodNames.add(name);
 				}
@@ -70,7 +70,7 @@ export class StrucTSClassValidator {
 		const className = classNode.name;
 		for (const statement of classNode.statements) {
 			if (isMethod(statement) && statement.name === className) {
-				accept('error', `Method name '${className}' should not be the same as the Class name.`, {node: statement, property: 'name'});
+				accept('error', `Method name '${className}' should not be the same as the Class name.`, { node: statement, property: 'name' });
 			}
 		}
 	}
@@ -84,7 +84,7 @@ export class StrucTSClassValidator {
 			} else if (isMethod(statement)) {
 				const name = statement.name;
 				if (propertyNames.has(name)) {
-					accept('error', `Method '${name}' should not have the same name as another property in the same class.`, {node: statement, property: 'name'});
+					accept('error', `Method '${name}' should not have the same name as another property in the same class.`, { node: statement, property: 'name' });
 				}
 			}
 		}
@@ -98,7 +98,7 @@ export class StrucTSClassValidator {
 				const parameterNames = new Set();
 				for (const parameter of method.parameters) {
 					if (parameterNames.has(parameter.name)) {
-						accept('error', `Duplicate parameter name '${parameter.name}' in method '${method.name}'.`, {node: parameter, property: 'name'});
+						accept('error', `Duplicate parameter name '${parameter.name}' in method '${method.name}'.`, { node: parameter, property: 'name' });
 					} else {
 						parameterNames.add(parameter.name);
 					}
