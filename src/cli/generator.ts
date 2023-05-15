@@ -1,39 +1,132 @@
 import fs from 'fs';
 import path from 'path';
-import { GeneratorNode, CompositeGeneratorNode, NL, toString } from 'langium';
-import { Class, Model, isClass, isProperty } from '../language-server/generated/ast';
+
+import { GeneratorNode, CompositeGeneratorNode, NL, toString, IndentNode } from 'langium';
+
+import { Class, Model, Property, isClass, isProperty, ComposedProperty, AttributeProperty, ReferenceProperty, isComposedProperty, isAttributeProperty, isReferenceProperty } from '../language-server/generated/ast';
 import { extractDestinationAndName } from './cli-util';
 import { appendImports } from './utils/fs-utils';
+import { hasClassImplementedFactory } from './utils/model_checks';
 
-// Stub generateProperty function
-export function generateProperty(property: unknown): GeneratorNode {
-    return new CompositeGeneratorNode();
+
+// function generateFactoryClass(cls: Class): GeneratorNode {
+//     const factoryClassName = `${cls.name}Factory`;
+//     const factoryClassHeader = `class ${factoryClassName} {\n`;
+//     const factoryClassFooter = `}\n\n`;
+//     // const classProperties = getClassProperties(cls);
+//     // const classMethods = getClassMethods(cls);
+
+//     let factoryClass = new CompositeGeneratorNode();
+//     factoryClass.append(getFactoryClassComment(factoryClassName));
+//     factoryClass.append(factoryClassHeader);
+//       // Iterate through the properties of the class and generate code for each property
+//   for (const statement of cls.statements) {
+//     if (isProperty(statement)) {
+//         const propertyNode = generateProperty(statement);
+//         factoryClass.append(propertyNode, NL);
+//     }
+//   }
+//     factoryClass.append(factoryClassFooter);
+
+//     return factoryClass;
+// }
+
+// function getFactoryClassComment(className: string): string {
+// return `/**
+// * The ${className}Factory is responsible for creating new ${className} instances.
+// */
+// `;
+// }
+
+function generateProperty(property: Property): GeneratorNode {
+    const propertyNode = new CompositeGeneratorNode();
+
+    if (isComposedProperty(property)) {
+        propertyNode.append(generateComposedProperty(property));
+    } else if (isAttributeProperty(property)) {
+        propertyNode.append(generateAttributeProperty(property));
+    } else if (isReferenceProperty(property)) {
+        propertyNode.append(generateReferenceProperty(property));
+    }
+
+    return propertyNode;
 }
 
-export function generateClass(cls: Class): CompositeGeneratorNode {
-  const classNode = new CompositeGeneratorNode();
+function generateComposedProperty(property: ComposedProperty): GeneratorNode {
+    const propertyNode = new CompositeGeneratorNode();
+
+    propertyNode.append(property.name, ": ");
+    // FIXME: managing composition is needed
+    if (property.cardinality) {
+        propertyNode.append("CustomCollection<", property.type.class.ref?.name, ">");
+    } else {
+        propertyNode.append(property.type.class.ref?.name);
+    }
+    propertyNode.append(";");
+
+    return propertyNode;
+}
+
+function generateAttributeProperty(property: AttributeProperty): GeneratorNode {
+    const propertyNode = new CompositeGeneratorNode();
+
+    propertyNode.append(property.name, ": ");
+    if (property.cardinality) {
+        propertyNode.append("CustomCollection<", property.type, ">");
+    } else {
+        propertyNode.append(property.type);
+    }
+    propertyNode.append(";");
+
+    return propertyNode;
+}
+
+function generateReferenceProperty(property: ReferenceProperty): GeneratorNode {
+    const propertyNode = new CompositeGeneratorNode();
+
+    propertyNode.append(property.name, ": ");
+    if (property.cardinality) {
+        propertyNode.append("CustomCollection<", property.type.class.ref?.name, ">");
+    } else {
+        propertyNode.append(property.type.class.ref?.name);
+    }
+    propertyNode.append(";");
+
+    return propertyNode;
+}
+
+function generateClass(cls: Class): CompositeGeneratorNode {
+  const classGeneratorNode = new CompositeGeneratorNode();
 
   // Class header
-  classNode.append("export class ", cls.name, " {", NL);
+  classGeneratorNode.append("export class ", cls.name, " {", NL);
 
   // Iterate through the properties of the class and generate code for each property
+  const classScope = new IndentNode();
   for (const statement of cls.statements) {
     if (isProperty(statement)) {
-        // const propertyNode = generateProperty(statement);
-        classNode.append(statement.name, NL);
+        const propertyNode = generateProperty(statement);
+        classScope.append(propertyNode, NL);
     }
   }
+  classGeneratorNode.append(classScope);
+
+
+// TODO: Add destroy method. If there is composition, destroy the items in the collection
 
   // Class 'footer'
-  classNode.append("}", NL);
+  classGeneratorNode.append("}", NL);
 
-  return classNode;
+
+  if (hasClassImplementedFactory(cls)) {
+    // classGeneratorNode.append(generateFactoryClass(cls));
+  }
+
+  return classGeneratorNode;
 }
-
 
 export function generateTypeScript(model: Model, filePath: string, destination: string | undefined): string {
     const fileNode = new CompositeGeneratorNode();
-    fileNode.append('"use strict";', NL, NL);
 
     appendImports(fileNode, model, destination);
 

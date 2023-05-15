@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 
 import { Model } from "../../language-server/generated/ast";
-import { CompositeGeneratorNode, NL } from "langium";
+import { CompositeGeneratorNode } from "langium";
 import { hasCardinality } from "./model_checks";
 
 export function appendImports(fileNode: CompositeGeneratorNode, model: Model, outputPath: string | undefined): void {
@@ -21,7 +21,7 @@ export function appendImports(fileNode: CompositeGeneratorNode, model: Model, ou
       fileNode.append("import { CustomCollection } from './strucTS_core/custom_collection';");
       fileNode.appendNewLine();
       fileNode.appendNewLine();
-      
+
       const sourcePath = path.join(__dirname, '../../../src/core/custom_collection.ts');
       const destinationPath = path.join(corePath, 'custom_collection.ts');
 
