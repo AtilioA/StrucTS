@@ -7,34 +7,76 @@ import { extractDestinationAndName } from './cli-util';
 import { appendImports } from './utils/fs-utils';
 import { hasClassImplementedFactory } from './utils/model_checks';
 
-// Function generateFactoryClass(cls: Class): GeneratorNode {
-//     const factoryClassName = `${cls.name}Factory`;
-//     const factoryClassHeader = `class ${factoryClassName} {\n`;
-//     const factoryClassFooter = `}\n\n`;
-//     // const classProperties = getClassProperties(cls);
-//     // const classMethods = getClassMethods(cls);
+function generateFactoryClass(cls: Class): GeneratorNode {
+	function createFactoryConstructor(cls: Class): CompositeGeneratorNode {
+		const constructorNode = new IndentNode();
 
-//     let factoryClass = new CompositeGeneratorNode();
-//     factoryClass.append(getFactoryClassComment(factoryClassName));
-//     factoryClass.append(factoryClassHeader);
-//       // Iterate through the properties of the class and generate code for each property
-//   for (const statement of cls.statements) {
-//     if (isProperty(statement)) {
-//         const propertyNode = generateProperty(statement);
-//         factoryClass.append(propertyNode, NL);
-//     }
-//   }
-//     factoryClass.append(factoryClassFooter);
+		// REFACTOR: modularize (and call inside other functions as well)
+		// Collect property names to be used as parameters
+		const properties = cls.statements.filter(statement => isProperty(statement));
+		const parameters = properties.map(prop => {
+			// Check the type of the property and handle it accordingly
+			if (isComposedProperty(prop)) {
+				return `${prop.name}: ${prop.type.class.ref?.name}`;
+			} else if (isAttributeProperty(prop)) {
+				return `${prop.name}: ${prop.type}`;
+			} else if (isReferenceProperty(prop)) {
+				return `${prop.name}: ${prop.type.class.ref?.name}`;
+			} else {
+				// Handle other cases as necessary
+				return '';
+			}
+		}).filter(Boolean).join(', ');
 
-//     return factoryClass;
-// }
+		// Method signature with parameters
+		constructorNode.append(`create${cls.name}(${parameters}) {`, NL);
 
-// function getFactoryClassComment(className: string): string {
-// return `/**
-// * The ${className}Factory is responsible for creating new ${className} instances.
-// */
-// `;
-// }
+		// Method body
+		const bodyNode = new IndentNode();
+		const argumentList = properties.map(prop => prop.name).join(', ');
+		bodyNode.append(`return new ${cls.name}(${argumentList});`, NL);
+		constructorNode.append(bodyNode);
+
+		constructorNode.append('}', NL);
+
+		return constructorNode;
+	}
+
+	const factoryClassName = `${cls.name}Factory`;
+	const factoryClassHeader = `export class ${factoryClassName} {\n`;
+	const factoryClassFooter = '}';
+
+	const factoryClass = new CompositeGeneratorNode(NL);
+
+	factoryClass.append(getFactoryClassComment(factoryClassName));
+	factoryClass.append(factoryClassHeader);
+
+	// Iterate through the properties of the class and generate code for each property
+	const classScope = new IndentNode();
+	for (const statement of cls.statements) {
+		if (isProperty(statement)) {
+			const propertyNode = generateProperty(statement);
+			classScope.append(propertyNode, NL);
+		}
+	}
+
+	classScope.append(NL);
+
+	factoryClass.append(classScope);
+
+	factoryClass.append(createFactoryConstructor(cls));
+
+	factoryClass.append(factoryClassFooter, NL);
+
+	return factoryClass;
+}
+
+function getFactoryClassComment(className: string): string {
+	return `/**
+* The ${className}Factory is responsible for creating new ${className} instances.
+*/
+`;
+}
 
 function generateProperty(property: Property): GeneratorNode {
 	const propertyNode = new CompositeGeneratorNode();
@@ -119,7 +161,7 @@ function generateClass(cls: Class): CompositeGeneratorNode {
 	classGeneratorNode.append('}', NL);
 
 	if (hasClassImplementedFactory(cls)) {
-		// ClassGeneratorNode.append(generateFactoryClass(cls));
+		classGeneratorNode.append(generateFactoryClass(cls));
 	}
 
 	return classGeneratorNode;

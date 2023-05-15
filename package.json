@@ -95,7 +95,8 @@
             "indent": [
                 "error",
                 "tab"
-            ]
+            ],
+            "unicorn/prefer-module": "off"
         }
     }
 }
