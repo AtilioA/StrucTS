@@ -1,7 +1,11 @@
 import { type Model, type Class, type Property, isClass, isProperty } from '../../language-server/generated/ast';
 
 export function hasClassImplementedFactory(classDef: Class): boolean {
-	return classDef.implemented.some(i => i.name === 'Factory');
+	if (classDef.implements) {
+		return classDef.implements.implemented.some(i => i.name === 'Factory');
+	}
+
+	return false;
 }
 
 // Check if a property has cardinality constraints

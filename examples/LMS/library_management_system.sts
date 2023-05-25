@@ -8,7 +8,7 @@ class Library implements Factory {
 }
 
 // This class abstracts the concept of a Book, which has a title, an author, an ISBN, and a reference to the Member who borrowed it (if any).
-class Book {
+class Book implements (Builder) {
   attribute title: string;
   attribute author: string;
   attribute isbn: string;

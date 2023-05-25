@@ -12,8 +12,15 @@ Element:
 
 // Define the 'Class' rule to capture class definitions
 Class:
-    'class' name=ID ('implements' implemented+=Interface)? '{'
+    'class' name=ID (implements=Implements)? '{'
     statements+=ClassElement* '}';
+
+Implements:
+    'implements' (
+        // Allow optional parenthesis around the implemented interfaces
+        '(' implemented+=Interface (',' implemented+=Interface)* ')' |
+        implemented+=Interface (',' implemented+=Interface)*
+    );
 
 ClassElement:
     Property | Method;
@@ -28,13 +35,15 @@ Parameter:
 /* SECTION: Class Interfaces  */
 // Define a generic 'Interface' rule to capture interfaces, like 'FactoryInterface'
 Interface:
-    // It would be possible to add other interfaces here '|'
-    FactoryInterface;
+    FactoryInterface | BuilderInterface;
 
 // Define the 'FactoryInterface' rule for capturing factory implementations
 FactoryInterface:
     // REVIEW: This might be a hack to have 'Factory' as a keyword
     name='Factory';
+
+BuilderInterface:
+    name='Builder';
 
 /* SECTION: Class Properties */
 // Define the 'Property' rule to capture the properties of a class. It can be a statement for composition, attribute, or reference.
