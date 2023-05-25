@@ -20,10 +20,14 @@ export function registerValidationChecks(services: StrucTsServices) {
 
 	const classChecks: ValidationChecks<StrucTsAstType> = {
 		Class: [
+			classValidator.checkUniqueAttributeNames,
+			classValidator.checkValidCardinality,
+			classValidator.checkDirectSelfReferences,
 			classValidator.checkUniqueMethodNames,
 			classValidator.checkMethodNameNotClassName,
 			classValidator.checkMethodNameNotPropertyName,
 			classValidator.checkUniqueParameterNames,
+			classValidator.checkUniqueImplementedPatterns,
 		] };
 
 	registry.register(classChecks, modelValidator);
