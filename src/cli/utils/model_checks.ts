@@ -1,11 +1,23 @@
 import { type Model, type Class, type Property, isClass, isProperty } from '../../language-server/generated/ast';
 
-export function hasClassImplementedFactory(classDef: Class): boolean {
+type IImplementedInterfaces = {
+	Factory: boolean;
+	Builder: boolean;
+};
+
+export function getImplementedInterfaces(classDef: Class): IImplementedInterfaces {
+	const implementedInterfaces: IImplementedInterfaces = {
+		Factory: false,
+		Builder: false,
+	};
+
 	if (classDef.implements) {
-		return classDef.implements.implemented.some(i => i.name === 'Factory');
+		for (const implemented of classDef.implements.implemented) {
+			implementedInterfaces[implemented.name] = true;
+		}
 	}
 
-	return false;
+	return implementedInterfaces;
 }
 
 // Check if a property has cardinality constraints

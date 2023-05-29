@@ -20,3 +20,7 @@ export function createCollectionString(property: Property) {
 		return `new CustomCollection<${property.type.class.ref?.name}>(${lowerLimit}, ${upperLimit});`;
 	}
 }
+
+export function convertToPascalCase(name: string): string {
+	return name.replace(/(\w)(\w*)/g, (_, first: string, rest: string) => first.toUpperCase() + rest.toLowerCase());
+}

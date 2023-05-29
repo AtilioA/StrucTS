@@ -1,7 +1,8 @@
 import { type GeneratorNode, CompositeGeneratorNode, NL, IndentNode } from 'langium';
 import { type Class, type Property, isProperty, type ComposedProperty, type AttributeProperty, type ReferenceProperty, isComposedProperty, isAttributeProperty, isReferenceProperty, isReferencingProperty } from '../../language-server/generated/ast';
-import { hasClassImplementedFactory } from '../utils/model_checks';
+import { getImplementedInterfaces } from '../utils/model_checks';
 import { createCollectionString } from '../utils/strings';
+import { generateBuilderClass } from './builder_generator';
 
 function generateFactoryClass(cls: Class): CompositeGeneratorNode {
 	function createFactoryConstructor(cls: Class): CompositeGeneratorNode {
@@ -198,8 +199,15 @@ export function generateClass(cls: Class): CompositeGeneratorNode {
 	// Class 'footer'
 	classGeneratorNode.append('}', NL);
 
-	if (hasClassImplementedFactory(cls)) {
-		classGeneratorNode.append(generateFactoryClass(cls));
+	const implementedInterfaces = getImplementedInterfaces(cls);
+	if (implementedInterfaces.Factory && implementedInterfaces.Builder) {
+		// ...
+	} else if (implementedInterfaces.Factory) {
+		const factoryClass = generateFactoryClass(cls);
+		classGeneratorNode.append(factoryClass);
+	} else if (implementedInterfaces.Builder) {
+		const builderClass = generateBuilderClass(cls);
+		classGeneratorNode.append(builderClass);
 	}
 
 	return classGeneratorNode;
