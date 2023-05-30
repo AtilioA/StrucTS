@@ -50,14 +50,16 @@ function generateBuilderMethod(cls: Class, property: Property): IndentNode | nul
 		methodNode.append('public add', convertToPascalCase(property.name), '(', property.name, ': ', property.type.class.ref?.name, '): ', cls.name, 'Builder {', NL);
 	}
 
-	if (property.cardinality) {
-		methodNode.append('// FIXME: add element with CustomCollection API', NL);
-	}
-
 	// Method body
 	const bodyNode = new IndentNode();
-	bodyNode.append('this.', getClassObjectName(cls), '.', property.name, ' = ', property.name, ';', NL);
+	if (property.cardinality) {
+		bodyNode.append('this.', getClassObjectName(cls), '.', property.name, '.add(', property.name, ');', NL);
+	} else {
+		bodyNode.append('this.', getClassObjectName(cls), '.', property.name, ' = ', property.name, ';', NL);
+	}
+
 	bodyNode.append('return this;', NL);
+
 	methodNode.append(bodyNode);
 
 	methodNode.append('}', NL);

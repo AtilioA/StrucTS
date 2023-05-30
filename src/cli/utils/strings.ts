@@ -21,6 +21,18 @@ export function createCollectionString(property: Property) {
 	}
 }
 
-export function convertToPascalCase(name: string): string {
-	return name.replace(/(\w)(\w*)/g, (_, first: string, rest: string) => first.toUpperCase() + rest.toLowerCase());
+// Adapted from https://stackoverflow.com/a/73876341; license might vary
+export function convertToPascalCase(s: string): string {
+	// If the string is only lowercase letters and numbers
+	if (/^[a-z\d]+$/i.test(s)) {
+		// Uppercase the first letter
+		return s.charAt(0).toUpperCase() + s.slice(1);
+	} else {
+		// Uppercase the first letter of each word separated by a non-alphanumeric character
+		return s.replace(
+			/([a-z\d])([a-z\d]*)/gi,
+			(g0: string, g1: string, g2: string) => g1.toUpperCase() + g2.toLowerCase(),
+		// Remove all non-alphanumeric characters
+		).replace(/[^a-z\d]/gi, '');
+	}
 }
