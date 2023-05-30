@@ -28,10 +28,6 @@ function generateResetMethod(cls: Class): IndentNode {
 	// Assign a new cls.name object to this.getClassObjectName(cls). Call it with all the attribute properties as parameters
 	const bodyNode = new IndentNode();
 	bodyNode.append('this.', getClassObjectName(cls), ' = new ', cls.name, '(');
-	// FIXME: parameters are not needed; just call the constructor. However, we need to create constructors that do not require parameters.
-	// const attributeProperties = cls.statements.filter(statement => isProperty(statement) && isAttributeProperty(statement));
-	// const attributePropertyNames = attributeProperties.map(property => property.name);
-	// bodyNode.append(attributePropertyNames.join(', '));
 	bodyNode.append(');', NL);
 
 	resetMethodNode.append(bodyNode);
@@ -77,18 +73,31 @@ function generateBuildMethod(cls: Class): IndentNode {
 
 	bodyNode.append(`const result = this.${getClassObjectName(cls)};`, NL);
 	bodyNode.append('this.reset();', NL);
-	bodyNode.append('// Reset the builder so it can be used to build another object', NL);
+	bodyNode.append('// StrucTS: Reset the builder so it can be used to build another object', NL);
 	bodyNode.append('return result;', NL);
 
 	buildMethodNode.append(bodyNode);
 
-	buildMethodNode.append('}', NL);
+	buildMethodNode.append('}');
 
 	return buildMethodNode;
 }
 
+export function generateBuilderClassDoc(cls: Class): CompositeGeneratorNode {
+	const docNode = new CompositeGeneratorNode();
+
+	docNode.append(NL, '/**', NL);
+	docNode.append(' * StrucTS: Builder class for ', cls.name, ' objects', NL);
+	docNode.append(' * This class able to build objects of type ', cls.name, ' by setting its properties one by one', NL);
+	docNode.append(' */');
+
+	return docNode;
+}
+
 export function generateBuilderClass(cls: Class): CompositeGeneratorNode {
 	const builderClassNode = new CompositeGeneratorNode();
+
+	builderClassNode.append(generateBuilderClassDoc(cls));
 
 	// Builder Class header
 	builderClassNode.append(NL, 'export class ', cls.name, 'Builder {', NL);

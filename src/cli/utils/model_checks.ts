@@ -1,6 +1,6 @@
 import { type Model, type Class, type Property, isClass, isProperty } from '../../language-server/generated/ast';
 
-type IImplementedInterfaces = {
+export type IImplementedInterfaces = {
 	Factory: boolean;
 	Builder: boolean;
 };
