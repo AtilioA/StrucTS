@@ -1,5 +1,5 @@
 import { NL, IndentNode, CompositeGeneratorNode } from 'langium';
-import { isProperty, type Class, type Property, isComposedProperty, isAttributeProperty } from '../../language-server/generated/ast';
+import { isProperty, type Class, type Property, isAttributeProperty } from '../../language-server/generated/ast';
 import { convertToPascalCase } from '../utils/strings';
 
 function getClassObjectName(cls: Class): string {
@@ -44,9 +44,7 @@ function generateResetMethod(cls: Class): IndentNode {
 // Generate the Builder method
 function generateBuilderMethod(cls: Class, property: Property): IndentNode | null {
 	const methodNode = new IndentNode();
-	if (isComposedProperty(property)) {
-		methodNode.append('public add', convertToPascalCase(property.name), '(', property.name, ': ', property.type.class.ref?.name, '): ', cls.name, 'Builder {', NL);
-	} else if (isAttributeProperty(property)) {
+	if (isAttributeProperty(property)) {
 		methodNode.append('public add', convertToPascalCase(property.name), '(', property.name, ': ', property.type, '): ', cls.name, 'Builder {', NL);
 	} else {
 		methodNode.append('public add', convertToPascalCase(property.name), '(', property.name, ': ', property.type.class.ref?.name, '): ', cls.name, 'Builder {', NL);
