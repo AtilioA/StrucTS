@@ -4,11 +4,13 @@ import { type ComposedProperty, type AttributeProperty, type ReferenceProperty, 
 export function generateComposedProperty(property: ComposedProperty): GeneratorNode {
 	const propertyNode = new CompositeGeneratorNode();
 
-	propertyNode.append(property.name, ': ');
 	// FIXME: managing composition is needed
 	if (property.cardinality) {
+		// REVIEW: maybe this should not be readonly
+		propertyNode.append('private readonly ', property.name, ': ');
 		propertyNode.append('CustomCollection<', property.type.class.ref?.name, '>');
 	} else {
+		propertyNode.append('public', property.name, ': ');
 		propertyNode.append(property.type.class.ref?.name);
 	}
 
@@ -20,7 +22,7 @@ export function generateComposedProperty(property: ComposedProperty): GeneratorN
 export function generateAttributeProperty(property: AttributeProperty): GeneratorNode {
 	const propertyNode = new CompositeGeneratorNode();
 
-	propertyNode.append(property.name, ': ');
+	propertyNode.append('public ', property.name, ': ');
 	if (property.cardinality) {
 		propertyNode.append('CustomCollection<', property.type, '>');
 	} else {
@@ -35,10 +37,11 @@ export function generateAttributeProperty(property: AttributeProperty): Generato
 export function generateReferenceProperty(property: ReferenceProperty): GeneratorNode {
 	const propertyNode = new CompositeGeneratorNode();
 
-	propertyNode.append(property.name, ': ');
 	if (property.cardinality) {
+		propertyNode.append('private readonly ', property.name, ': ');
 		propertyNode.append('CustomCollection<', property.type.class.ref?.name, '>');
 	} else {
+		propertyNode.append('public', property.name, ': ');
 		propertyNode.append(property.type.class.ref?.name);
 	}
 
