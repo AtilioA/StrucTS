@@ -34,7 +34,7 @@ export function generateClassConstructor(cls: Class, implementedInterfaces: IImp
 	}
 
 	classConstructor.append(bodyNode);
-	classConstructor.append('}', NL);
+	classConstructor.append('}', NL, NL);
 
 	return classConstructor;
 }
@@ -60,12 +60,11 @@ export function generateClass(cls: Class): CompositeGeneratorNode {
 
 	classGeneratorNode.append(classAttributes);
 
-	const collectionInterfaces = generateCollectionInterface(cls);
-	classGeneratorNode.append(collectionInterfaces);
-
 	const classConstructor = generateClassConstructor(cls, implementedInterfaces);
-
 	classGeneratorNode.append(classConstructor);
+
+	const classCollectionsInterfaces = generateCollectionInterface(cls);
+	classGeneratorNode.append(classCollectionsInterfaces);
 
 	// TODO: Add destroy method. If there is composition, destroy the items in the collection
 
