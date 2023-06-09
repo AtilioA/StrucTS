@@ -66,7 +66,9 @@ export function generateClass(cls: Class): CompositeGeneratorNode {
 	const classCollectionsInterfaces = generateCollectionInterface(cls);
 	classGeneratorNode.append(classCollectionsInterfaces);
 
-	// TODO: Add destroy method. If there is composition, destroy the items in the collection
+	// TODO: If there is composition, add destroy method (destroy the items in the collection)
+	// const classDestroyMethod = generateDestroyMethod(cls);
+	// classGeneratorNode.append(classDestroyMethod);
 
 	// Class 'footer'
 	classGeneratorNode.append('}', NL);
