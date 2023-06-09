@@ -1,5 +1,6 @@
-import { type GeneratorNode, CompositeGeneratorNode } from 'langium';
+import { type GeneratorNode, CompositeGeneratorNode, NL, IndentNode } from 'langium';
 import { type ComposedProperty, type AttributeProperty, type ReferenceProperty, type Property, isComposedProperty, isAttributeProperty, isReferenceProperty, type Class, isProperty } from '../../language-server/generated/ast';
+import { makeFirstLetterUpperCase } from '../utils/strings';
 
 export function generateComposedProperty(property: ComposedProperty): GeneratorNode {
 	const propertyNode = new CompositeGeneratorNode();
@@ -83,4 +84,60 @@ export function getPropertyParameters(cls: Class): string {
 		})
 		.filter(Boolean)
 		.join(', ');
+}
+
+export function generateCollectionInterface(cls: Class): CompositeGeneratorNode {
+	// function generateGetters(property) {}
+	const getterNode = new CompositeGeneratorNode();
+
+	const properties = cls.statements.filter(statement => isProperty(statement));
+	if (properties.length > 0) {
+		const commentNode = new IndentNode();
+		commentNode.append('/* StrucTS: Accessors/modifiers for private CustomCollection properties */');
+		getterNode.append(commentNode, NL);
+	}
+
+	for (const property of properties) {
+		if (isProperty(property)) {
+			const getter = new IndentNode();
+			if (property.cardinality) {
+				getter.append('public get', makeFirstLetterUpperCase(property.name), '(): ');
+				if (isComposedProperty(property) || isReferenceProperty(property)) {
+					getter.append(makeFirstLetterUpperCase(property.type.class.ref?.name), '[]');
+				} else {
+					getter.append(property.type, '[]');
+				}
+
+				getter.append(' {', NL);
+
+				getter.append('return this.', property.name, '.getItems();', NL);
+				// getter.append('return this.', property.name, ';', NL);
+
+				getter.append('}', NL);
+
+				if (isComposedProperty(property) || isReferenceProperty(property)) {
+					getter.append('public add', makeFirstLetterUpperCase(property.name), `(addItem: ${property.type.class.ref?.name}): void { `, NL);
+				}
+
+				getter.append('this.', property.name, '.add(addItem);', NL);
+				// getter.append('return this.', property.name, ';', NL);
+
+				getter.append('}', NL);
+
+				if (isComposedProperty(property) || isReferenceProperty(property)) {
+					getter.append('public remove', makeFirstLetterUpperCase(property.name), `(removeItem: ${property.type.class.ref?.name}): void { `, NL);
+				}
+
+				getter.append('this.', property.name, '.remove(removeItem);', NL);
+				// getter.append('return this.', property.name, ';', NL);
+
+				getter.append('}', NL);
+
+				// Add newline if not last getter
+				getterNode.append(getter, NL);
+			}
+		}
+	}
+
+	return getterNode;
 }

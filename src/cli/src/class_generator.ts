@@ -3,7 +3,7 @@ import { type Class, type Property, isProperty } from '../../language-server/gen
 import { type IImplementedInterfaces, getImplementedInterfaces } from '../utils/model_checks';
 import { createCollectionString } from '../utils/strings';
 import { generateBuilderClass } from './builder_generator';
-import { generateProperty, getPropertyParameters } from './property_generator';
+import { generateCollectionInterface, generateProperty, getPropertyParameters } from './property_generator';
 import { generateFactoryClass } from './factory_generator';
 
 export function generateClassConstructor(cls: Class, implementedInterfaces: IImplementedInterfaces): IndentNode {
@@ -14,7 +14,7 @@ export function generateClassConstructor(cls: Class, implementedInterfaces: IImp
 
 	const bodyNode = new IndentNode();
 	if (implementedInterfaces.Builder) {
-		classConstructor.append(NL, 'constructor() {', NL);
+		classConstructor.append('constructor() {', NL);
 		bodyNode.append('return this;', NL);
 	} else {
 		classConstructor.append(NL, `constructor(${constructorParameters}) {`, NL);
@@ -56,7 +56,12 @@ export function generateClass(cls: Class): CompositeGeneratorNode {
 		classAttributes.append(propertyNode, NL);
 	}
 
+	classAttributes.append(NL);
+
 	classGeneratorNode.append(classAttributes);
+
+	const collectionInterfaces = generateCollectionInterface(cls);
+	classGeneratorNode.append(collectionInterfaces);
 
 	const classConstructor = generateClassConstructor(cls, implementedInterfaces);
 
