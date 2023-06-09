@@ -49,7 +49,7 @@ function generateBuilderMethod(cls: Class, property: Property): IndentNode | nul
 	// Method body
 	const bodyNode = new IndentNode();
 	if (property.cardinality) {
-		bodyNode.append('this.', getClassObjectName(cls), '.', property.name, '.add(', property.name, ');', NL);
+		bodyNode.append('this.add', convertToPascalCase(property.name), '(', property.name, ');', NL);
 	} else {
 		bodyNode.append('this.', getClassObjectName(cls), '.', property.name, ' = ', property.name, ';', NL);
 	}
