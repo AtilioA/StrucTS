@@ -36,3 +36,11 @@ export function convertToPascalCase(s: string): string {
 		).replace(/[^a-z\d]/gi, '');
 	}
 }
+
+export function makeFirstLetterUpperCase(s: string | undefined): string | undefined {
+	if (!s) {
+		return undefined;
+	}
+
+	return s.charAt(0).toUpperCase() + s.slice(1);
+}
