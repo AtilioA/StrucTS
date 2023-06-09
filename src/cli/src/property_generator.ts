@@ -87,57 +87,71 @@ export function getPropertyParameters(cls: Class): string {
 }
 
 export function generateCollectionInterface(cls: Class): CompositeGeneratorNode {
-	// function generateGetters(property) {}
-	const getterNode = new CompositeGeneratorNode();
+	function generateGetters(property: Property): CompositeGeneratorNode {
+		const getterNode = new CompositeGeneratorNode();
+		getterNode.append('public get', makeFirstLetterUpperCase(property.name), '(): ');
+		if (isComposedProperty(property) || isReferenceProperty(property)) {
+			getterNode.append(makeFirstLetterUpperCase(property.type.class.ref?.name), '[]');
+		} else {
+			getterNode.append(property.type, '[]');
+		}
+
+		getterNode.append(' {', NL);
+
+		const getterBody = new IndentNode();
+		getterBody.append('return this.', property.name, '.getItems();', NL);
+		getterNode.append(getterBody, '}', NL);
+
+		return getterNode;
+	}
+
+	function generateAdders(property: Property): CompositeGeneratorNode {
+		const adderNode = new CompositeGeneratorNode();
+
+		if (isComposedProperty(property) || isReferenceProperty(property)) {
+			adderNode.append('public add', makeFirstLetterUpperCase(property.name), `(addItem: ${property.type.class.ref?.name}): void { `, NL);
+		}
+
+		const adderBody = new IndentNode();
+		adderBody.append('this.', property.name, '.add(addItem);', NL);
+		adderNode.append(adderBody, '}', NL);
+
+		return adderNode;
+	}
+
+	function generateRemover(property: Property): CompositeGeneratorNode {
+		const removerNode = new CompositeGeneratorNode();
+		if (isComposedProperty(property) || isReferenceProperty(property)) {
+			removerNode.append('public remove', makeFirstLetterUpperCase(property.name), `(removeItem: ${property.type.class.ref?.name}): void { `, NL);
+		}
+
+		const removerBody = new IndentNode();
+		removerBody.append('this.', property.name, '.remove(removeItem);', NL);
+		removerNode.append(removerBody, '}', NL);
+
+		return removerNode;
+	}
+
+	const interfacesNode = new CompositeGeneratorNode();
 
 	const properties = cls.statements.filter(statement => isProperty(statement));
 	if (properties.length > 0) {
 		const commentNode = new IndentNode();
 		commentNode.append('/* StrucTS: Accessors/modifiers for private CustomCollection properties */');
-		getterNode.append(commentNode, NL);
-	}
+		interfacesNode.append(commentNode, NL);
 
-	for (const property of properties) {
-		if (isProperty(property)) {
-			const getter = new IndentNode();
-			if (property.cardinality) {
-				getter.append('public get', makeFirstLetterUpperCase(property.name), '(): ');
-				if (isComposedProperty(property) || isReferenceProperty(property)) {
-					getter.append(makeFirstLetterUpperCase(property.type.class.ref?.name), '[]');
-				} else {
-					getter.append(property.type, '[]');
+		for (const property of properties) {
+			if (isProperty(property)) {
+				const accessorsNode = new IndentNode();
+				if (property.cardinality) {
+					accessorsNode.append(generateGetters(property), NL);
+					accessorsNode.append(generateAdders(property), NL);
+					accessorsNode.append(generateRemover(property), NL);
+					interfacesNode.append(accessorsNode);
 				}
-
-				getter.append(' {', NL);
-
-				getter.append('return this.', property.name, '.getItems();', NL);
-				// getter.append('return this.', property.name, ';', NL);
-
-				getter.append('}', NL);
-
-				if (isComposedProperty(property) || isReferenceProperty(property)) {
-					getter.append('public add', makeFirstLetterUpperCase(property.name), `(addItem: ${property.type.class.ref?.name}): void { `, NL);
-				}
-
-				getter.append('this.', property.name, '.add(addItem);', NL);
-				// getter.append('return this.', property.name, ';', NL);
-
-				getter.append('}', NL);
-
-				if (isComposedProperty(property) || isReferenceProperty(property)) {
-					getter.append('public remove', makeFirstLetterUpperCase(property.name), `(removeItem: ${property.type.class.ref?.name}): void { `, NL);
-				}
-
-				getter.append('this.', property.name, '.remove(removeItem);', NL);
-				// getter.append('return this.', property.name, ';', NL);
-
-				getter.append('}', NL);
-
-				// Add newline if not last getter
-				getterNode.append(getter, NL);
 			}
 		}
 	}
 
-	return getterNode;
+	return interfacesNode;
 }

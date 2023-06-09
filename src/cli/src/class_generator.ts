@@ -17,7 +17,7 @@ export function generateClassConstructor(cls: Class, implementedInterfaces: IImp
 		classConstructor.append('constructor() {', NL);
 		bodyNode.append('return this;', NL);
 	} else {
-		classConstructor.append(NL, `constructor(${constructorParameters}) {`, NL);
+		classConstructor.append(`constructor(${constructorParameters}) {`, NL);
 
 		// Constructor body (assigning parameters to properties)
 		const properties = cls.statements.filter(statement => isProperty(statement));
