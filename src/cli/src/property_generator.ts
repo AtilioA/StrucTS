@@ -132,20 +132,10 @@ export function generateCollectionInterface(cls: Class): CompositeGeneratorNode 
 		return removerNode;
 	}
 
-	function generateDestroy(cls: Class): IndentNode {
-		const destroyNode = new IndentNode();
-		destroyNode.append('public destroy(): void {', NL);
-		const destroyBody = new IndentNode();
-		destroyBody.append(`/* StrucTS: Add any cleanup logic specific to the ${cls.name} class here */`, NL);
-		destroyBody.append(`console.log('${cls.name} instance is being destroyed.');`, NL);
-		destroyNode.append(destroyBody, '}');
-
-		return destroyNode;
-	}
-
 	const interfacesNode = new CompositeGeneratorNode();
 
-	const properties = cls.statements.filter(statement => isProperty(statement));
+	const properties = cls.statements.filter(statement => isProperty(statement) && statement.cardinality);
+
 	if (properties.length > 0) {
 		const commentNode = new IndentNode();
 		commentNode.append('/* StrucTS: Accessors/modifiers for private CustomCollection properties */');
@@ -162,8 +152,6 @@ export function generateCollectionInterface(cls: Class): CompositeGeneratorNode 
 				}
 			}
 		}
-
-		interfacesNode.append(generateDestroy(cls), NL);
 	}
 
 	return interfacesNode;
