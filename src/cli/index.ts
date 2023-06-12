@@ -6,7 +6,7 @@ import { StrucTsLanguageMetaData } from '../language-server/generated/module';
 import { createStrucTsServices } from '../language-server/struc-ts-module';
 import { extractAstNode } from './cli-util';
 import { generateCommands } from './typescript_generator';
-import { generateDot } from './dot_generator';
+import { generateCommands as generateDot } from './dot_generator';
 
 export const generateAction = async (fileName: string, options: GenerateOptions): Promise<void> => {
 	const services = createStrucTsServices(NodeFileSystem).StrucTs;
@@ -18,20 +18,18 @@ export const generateAction = async (fileName: string, options: GenerateOptions)
 export const generateDotAction = async (fileName: string, options: GenerateOptions): Promise<void> => {
 	const services = createStrucTsServices(NodeFileSystem).StrucTs;
 	const model = await extractAstNode<Model>(fileName, services);
-	const _generatedFilePath = generateDot(model, fileName, options.destination);
-	console.log(chalk.green(`Graphviz dot file generation is still WIP (${_generatedFilePath}), but input is well-formed: ${fileName}`));
+	const generatedFilePath = generateDot(model, fileName, options.destination);
+	console.log(chalk.green(`Graphviz dot file generated successfully (WIP): ${generatedFilePath}`));
 };
 
 export type GenerateOptions = {
 	destination?: string;
 };
 
-// eslint-disable-next-line import/no-anonymous-default-export
-export default function (): void {
+export function entrypoint(): void {
 	const program = new Command();
 
 	program
-	// eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-require-imports, unicorn/prefer-module
 		.version(require('../../package.json').version);
 
 	const fileExtensions = StrucTsLanguageMetaData.fileExtensions.join(', ');
@@ -43,10 +41,10 @@ export default function (): void {
 		.action(generateAction);
 
 	program
-		.command('generate-dot')
+		.command('generate-graphviz')
+		.description('Generates a GraphViz representation of a StrucTS file')
 		.argument('<StrucTS file>', `StrucTS source file (possible file extensions: ${fileExtensions})`)
 		.option('-d, --destination <dir>', 'output directory for the dot files')
-		.description('generates a Graphviz dot file from a StrucTS input file')
 		.action(generateDotAction);
 
 	program.parse(process.argv);

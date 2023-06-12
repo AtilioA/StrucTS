@@ -7,7 +7,7 @@ import { extractDestinationAndName } from './cli-util';
 import { appendImports } from './utils/fs-utils';
 import { generateClass } from './src/class_generator';
 
-export function generateTypeScript(model: Model, filePath: string, destination: string | undefined): string {
+export function generateTypeScript(model: Model, destination: string | undefined): string {
 	const fileNode = new CompositeGeneratorNode();
 
 	appendImports(fileNode, model, destination);
@@ -31,7 +31,7 @@ export function generateCommands(model: Model, filePath: string, destination: st
 		fs.mkdirSync(data.destination, { recursive: true });
 	}
 
-	const result = generateTypeScript(model, filePath, destination);
+	const result = generateTypeScript(model, destination);
 
 	fs.writeFileSync(generatedFilePath, result);
 
