@@ -3,7 +3,7 @@ import path from 'node:path';
 import { CompositeGeneratorNode, IndentNode, NL, toString } from 'langium';
 import { type Model, isClass } from '../language-server/generated/ast';
 import { extractDestinationAndName } from './cli-util';
-import { generateGraphvizClass } from './src/graphviz/class_generator';
+import { generateAssociations, generateGraphvizClass } from './src/graphviz/class_generator';
 
 export function generateDot(model: Model): string {
 	const fileNode = new CompositeGeneratorNode();
@@ -27,6 +27,8 @@ export function generateDot(model: Model): string {
 	}
 
 	fileNode.append(digraphBodyNode);
+
+	fileNode.append(generateAssociations(model));
 
 	fileNode.append('}', NL);
 
