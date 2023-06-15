@@ -1,23 +1,35 @@
-import { type CARDINALITY_LIMIT, type Property, isAttributeProperty } from '../../language-server/generated/ast';
+import { type Property, isAttributeProperty, type Cardinality } from '../../language-server/generated/ast';
 
-// eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-export function convertCardinalityLimitToValue(limit: CARDINALITY_LIMIT | undefined): string | CARDINALITY_LIMIT | undefined {
-	if (limit === '*') {
-		return 'null';
+type ICardinalityLimit = {
+ upper: string | undefined;
+ lower: string | undefined;
+};
+
+export function convertCardinalityLimitToValue(limit: Cardinality | undefined): ICardinalityLimit {
+	const limits: ICardinalityLimit = {
+		upper: limit?.upper?.toString(),
+		lower: limit?.lower?.toString(),
+	};
+
+	if (limit?.upper === '*' || limit?.upper === undefined) {
+		limits.upper = 'null';
 	}
 
-	return limit;
+	if (limit?.lower === '*') {
+		limits.lower = '0';
+	}
+
+	return limits;
 }
 
 export function createCollectionString(property: Property) {
-	const lowerLimit = convertCardinalityLimitToValue(property?.cardinality?.lower);
-	const upperLimit = convertCardinalityLimitToValue(property?.cardinality?.upper);
+	const cardinalityLimits = convertCardinalityLimitToValue(property?.cardinality);
 
 	if (isAttributeProperty(property)) {
-		return `new CustomCollection<${property.type}>(${lowerLimit}, ${upperLimit});`;
+		return `new CustomCollection<${property.type}>(${cardinalityLimits.lower}, ${cardinalityLimits.upper});`;
 	} else {
 		// Composition or reference
-		return `new CustomCollection<${property.type.class.ref?.name}>(${lowerLimit}, ${upperLimit});`;
+		return `new CustomCollection<${property.type.class.ref?.name}>(${cardinalityLimits.lower}, ${cardinalityLimits.upper});`;
 	}
 }
 
