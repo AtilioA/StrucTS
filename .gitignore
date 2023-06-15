@@ -109,6 +109,7 @@ dist
 /outputs/
 generated/
 examples/*.js
+examples/**/*.js
 *tmLanguage.json
 .gitignore
 syntaxes/*.tmLanguage.json
