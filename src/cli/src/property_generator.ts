@@ -42,7 +42,7 @@ export function generateReferenceProperty(property: ReferenceProperty): Generato
 		propertyNode.append('private readonly ', property.name, ': ');
 		propertyNode.append('CustomCollection<', property.type.class.ref?.name, '>');
 	} else {
-		propertyNode.append('public', property.name, ': ');
+		propertyNode.append('public ', property.name, ': ');
 		propertyNode.append(property.type.class.ref?.name);
 	}
 

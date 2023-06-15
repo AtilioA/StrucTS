@@ -24,6 +24,7 @@ export function generateDestroy(cls: Class): IndentNode {
 				const propertyName = property.name;
 				// const itemType = property.type.class.ref?.name;
 				destroyBody.append(`for (const item of this.${propertyName}.getItems()) {`, NL);
+				// REVIEW: add actual indentation
 				destroyBody.append('    item.destroy();', NL);
 				destroyBody.append('}', NL);
 			}
