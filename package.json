@@ -1,7 +1,7 @@
 {
     "name": "strucTS",
     "displayName": "strucTS",
-    "description": "Please enter a brief description here",
+    "description": "StrucTS is a domain-specific language (DSL) developed with Langium to define structural models that can be transpiled into TypeScript.",
     "version": "0.0.1",
     "engines": {
         "vscode": "^1.67.0"

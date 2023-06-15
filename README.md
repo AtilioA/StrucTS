@@ -65,25 +65,22 @@ class Playlist {
   attribute name: string;
   references songs: Song[*];
 }
-
-class
-
 ```
 
-After defining your model in a `.sts` file, you can use the extension to check for any semantic constraints violations. Either get the extension from the VS Code Marketplace (`...`) or press F5 to run the extension in debug mode, then open the `.sts`.
-
-Run the following command to generate TypeScript code from your StrucTS model:
+After defining your model in a `.sts` file, you can use the CLI to check for any semantic constraints violations. Run the following command to generate TypeScript code from your StrucTS model:
 
 ```bash
 bin/cli generate <file>
 ```
 
 The CLI will inform you of any errors in your model.
+
 <br/>
 If there are none, the generated TypeScript code will be placed in the `generated/` directory by default, and can already be used on its own.
-<br/>The output is linted using ESLint and `xo`, and you can run `npm run lint` to check for any linting errors. However, note that ignored directories (such as `generated/`) cannot linted.
+<br/>
+The output is linted using ESLint and `xo`, and you can run `npm run lint` to check for any linting errors. However, note that ignored directories (such as `generated/`) cannot linted.
 
-To visualizate the model with GraphViz (.dot/.gv), execute the following command:
+To visualize the model with GraphViz (.dot/.gv), execute the following command:
 
 ```bash
 bin/cli generate-graphviz <file>
@@ -93,11 +90,19 @@ Again, the CLI will inform you of any errors in your model and the generated Gra
 
 #### Usage as VS Code extension
 
+To use it as a VS Code extension, either download the latest version from the [release page](https://github.com/AtilioA/StrucTS/releases) and install it in VS Code, or open the project and press F5 to run the extension in debug mode.
+
+Then, open a `.sts` file. You should have should have syntax highlighting and error validation for your StrucTS programs.
+
+You can also press `Ctrl+Shift+P` to open the command palette, and select `Generate TypeScript code from StrucTS model` to generate TypeScript code from your StrucTS model, or `Generate GraphViz code from StrucTS model` to generate a GraphViz .gv model.
+
+Instructions for building the extension itself are available in the [Langium documentation](https://langium.org/tutorials/building_an_extension/).
+
 ## Acknowledgments
 
-- [Langium](https://github.com/langium/langium): for providing the tools to build and parse the StrucTS grammar, and for providing the framework for code generation.
+- [Langium](https://github.com/langium/langium): for providing the tools to build and parse the StrucTS grammar, and for providing the framework for code validation and generation.
 - [TypeScript](https://github.com/microsoft/TypeScript): for serving as the target system for code generation.
-- ...
+- [Visual Studio Code](https://github.com/microsoft/vscode): for providing support for the extension.
 
 ## License
 
