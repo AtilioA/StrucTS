@@ -4,9 +4,15 @@ import { NodeFileSystem } from 'langium/node';
 import { type Model } from '../language-server/generated/ast';
 import { StrucTsLanguageMetaData } from '../language-server/generated/module';
 import { createStrucTsServices } from '../language-server/struc-ts-module';
+import packageJson from '../../package.json';
 import { extractAstNode } from './cli-util';
 import { generateCommands } from './typescript_generator';
 import { generateCommands as generateDot } from './dot_generator';
+
+type PackageInfo = {
+	version: string;
+};
+const packageInfo = packageJson as PackageInfo;
 
 export const generateAction = async (fileName: string, options: GenerateOptions): Promise<void> => {
 	const services = createStrucTsServices(NodeFileSystem).StrucTs;
@@ -30,7 +36,7 @@ export function entrypoint(): void {
 	const program = new Command();
 
 	program
-		.version(require('../../package.json').version);
+		.version(packageInfo.version);
 
 	const fileExtensions = StrucTsLanguageMetaData.fileExtensions.join(', ');
 	program
