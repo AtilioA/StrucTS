@@ -35,10 +35,9 @@ export function generateDot(model: Model): string {
 	return toString(fileNode);
 }
 
-// REFACTOR: modularize and use the same code as in src/cli/typescript_generator.ts?
 export function generateCommands(model: Model, filePath: string, destination: string | undefined): string {
 	const data = extractDestinationAndName(filePath, destination);
-	const generatedFilePath = `${path.join(data.destination, data.name)}.dot`;
+	const generatedFilePath = `${path.join(data.destination, data.name)}.gv`;
 
 	if (!fs.existsSync(data.destination)) {
 		fs.mkdirSync(data.destination, { recursive: true });

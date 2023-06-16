@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "ES6",
     "module": "commonjs",
-    "resolveJsonModule": true,
     "lib": ["ESNext"],
     "sourceMap": true,
     "outDir": "out",
@@ -23,3 +22,4 @@
      "node_modules"
   ]
 }
+\

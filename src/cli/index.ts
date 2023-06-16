@@ -4,15 +4,9 @@ import { NodeFileSystem } from 'langium/node';
 import { type Model } from '../language-server/generated/ast';
 import { StrucTsLanguageMetaData } from '../language-server/generated/module';
 import { createStrucTsServices } from '../language-server/struc-ts-module';
-import packageJson from '../../package.json';
 import { extractAstNode } from './cli-util';
 import { generateCommands } from './typescript_generator';
 import { generateCommands as generateDot } from './dot_generator';
-
-type PackageInfo = {
-	version: string;
-};
-const packageInfo = packageJson as PackageInfo;
 
 export const generateAction = async (fileName: string, options: GenerateOptions): Promise<void> => {
 	const services = createStrucTsServices(NodeFileSystem).StrucTs;
@@ -25,7 +19,7 @@ export const generateDotAction = async (fileName: string, options: GenerateOptio
 	const services = createStrucTsServices(NodeFileSystem).StrucTs;
 	const model = await extractAstNode<Model>(fileName, services);
 	const generatedFilePath = generateDot(model, fileName, options.destination);
-	console.log(chalk.green(`Graphviz dot file generated successfully (WIP): ${generatedFilePath}`));
+	console.log(chalk.green(`Graphviz .gv file generated successfully: ${generatedFilePath}`));
 };
 
 export type GenerateOptions = {
@@ -36,7 +30,8 @@ export function entrypoint(): void {
 	const program = new Command();
 
 	program
-		.version(packageInfo.version);
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+		.version(require('../../package.json').version);
 
 	const fileExtensions = StrucTsLanguageMetaData.fileExtensions.join(', ');
 	program
