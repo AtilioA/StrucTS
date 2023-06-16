@@ -20,7 +20,7 @@ class Song {
 }
 
 // This class abstracts the concept of a playlist, which has a name, and a list of songs. A Playlist can have many songs.
-class Playlist {
+class Playlist implements Builder {
   attribute name: string;
   references songs: Song[*];
 }
