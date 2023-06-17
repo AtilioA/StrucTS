@@ -33,7 +33,6 @@ export class CustomCollection<T> {
 			// If the maxItems is not null and the number of items in the collection is greater than or equal to the maxItems, the item cannot be added to the collection.
 		} else {
 			// An error is thrown to indicate that the item could not be added to the collection due to the cardinality constraint.
-			// TODO: Use the type T name instead of 'item' in the error message.
 			throw new Error(
 				`Adding this item would violate the cardinality constraint: Collection cannot have more than ${this.maxItems} items.`,
 			);
@@ -57,17 +56,16 @@ export class CustomCollection<T> {
 				'The item to be removed does not exist in the collection, so it cannot be removed.',
 			);
 		} else {
-			// The item is removed from this collection's items array.
-			this.items.splice(index, 1);
 			// If the number of items in the collection is less than the minItems, the item cannot be removed from the collection.
 			if (this.items.length < this.minItems) {
 				// An error is thrown to indicate that the item could not be removed from the collection, due to the cardinality constraint.
-				// TODO: Use the defining
 				throw new Error(
 					`Removing this item would violate the cardinality constraint: Collection cannot have less than ${this.minItems} items.`,
 				);
 				// If the number of items in the collection is greater than or equal to the minItems, the item can be removed from the collection.
 			} else {
+				// The item is removed from this collection's items array.
+				this.items.splice(index, 1);
 				// The method returns true to indicate that the item was removed from the collection.
 				return true;
 			}

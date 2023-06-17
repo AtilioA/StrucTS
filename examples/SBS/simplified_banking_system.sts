@@ -30,10 +30,3 @@ class Transaction {
   // attribute type: EnumTransactionType;
   // attribute date: dateTime;
 }
-
-// Extra: maybe add enum to the DSL? This would be simple to translate to TypeScript, but is not necessary, adds more complexity to the DSL; overall, it is not a core feature of the language.
-// enum EnumTransactionType {
-//   DEPOSIT,
-//   WITHDRAWAL,
-//   TRANSFER
-// }
