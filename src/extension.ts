@@ -3,12 +3,18 @@ import * as vscode from 'vscode';
 import {
 	LanguageClient, type LanguageClientOptions, type ServerOptions, TransportKind,
 } from 'vscode-languageclient/node';
+import { NodeFileSystem } from 'langium/node';
+import { generateTSFile } from './cli/typescript_generator';
+import { extractAstNode } from './cli/cli-util';
+import { type Model } from './language-server/generated/ast';
+import { createStrucTsServices } from './language-server/struc-ts-module';
 
 let client: LanguageClient;
 
 // This function is called when the extension is activated.
 export function activate(context: vscode.ExtensionContext): void {
 	client = startLanguageClient(context);
+	createStructsGenerationCommands(context);
 }
 
 // This function is called when the extension is deactivated.
@@ -22,13 +28,8 @@ export function deactivate(): Thenable<void> | undefined {
 
 function startLanguageClient(context: vscode.ExtensionContext): LanguageClient {
 	const serverModule = context.asAbsolutePath(path.join('out', 'language-server', 'main'));
-	// The debug options for the server
-	// --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging.
-	// By setting `process.env.DEBUG_BREAK` to a truthy value, the language server will wait until a debugger is attached.
 	const debugOptions = { execArgv: ['--nolazy', `--inspect${process.env.DEBUG_BREAK ? '-brk' : ''}=${process.env.DEBUG_SOCKET ?? '6009'}`] };
 
-	// If the extension is launched in debug mode then the debug server options are used
-	// Otherwise the run options are used
 	const serverOptions: ServerOptions = {
 		run: { module: serverModule, transport: TransportKind.ipc },
 		debug: { module: serverModule, transport: TransportKind.ipc, options: debugOptions },
@@ -37,16 +38,13 @@ function startLanguageClient(context: vscode.ExtensionContext): LanguageClient {
 	const fileSystemWatcher = vscode.workspace.createFileSystemWatcher('**/*.sts');
 	context.subscriptions.push(fileSystemWatcher);
 
-	// Options to control the language client
 	const clientOptions: LanguageClientOptions = {
 		documentSelector: [{ scheme: 'file', language: 'struc-ts' }],
 		synchronize: {
-			// Notify the server about file changes to files contained in the workspace
 			fileEvents: fileSystemWatcher,
 		},
 	};
 
-	// Create the language client and start the client.
 	const client = new LanguageClient(
 		'struc-ts',
 		'StrucTS',
@@ -54,9 +52,52 @@ function startLanguageClient(context: vscode.ExtensionContext): LanguageClient {
 		clientOptions,
 	);
 
-	// Start the client. This will also launch the server
 	client.start().then(() => client).catch(async error => {
 		console.error(error);
 	});
 	return client;
+}
+
+function createStructsGenerationCommands(context: vscode.ExtensionContext) {
+	console.log('Creating StrucTS commands');
+	const myCommandId = 'extension.generateTypeScript';
+	context.subscriptions.push(
+		vscode.commands.registerCommand(myCommandId, async (uri: vscode.Uri) => {
+			const editor = vscode.window.activeTextEditor;
+			if (!uri) {
+				console.log('No uri provided');
+				const documentUri = editor?.document.uri;
+				if (documentUri) {
+					uri = documentUri;
+				}
+			}
+
+			if (uri) {
+				console.log('Generating TypeScript file for ' + uri.fsPath);
+				await generateTS(uri);
+			}
+		}),
+	);
+}
+
+async function generateTS(uri: vscode.Uri): Promise<void> {
+	if (uri.scheme === 'file') {
+		const document = await vscode.workspace.openTextDocument(uri);
+		if (document.languageId === 'struc-ts') {
+			const services = createStrucTsServices(NodeFileSystem).StrucTs;
+			const model = await extractAstNode<Model>(document.fileName, services);
+			const destination = path.join(path.dirname(uri.fsPath), 'generated');
+			generateTSFile(model, document.fileName, destination);
+			await vscode.window.showInformationMessage('TypeScript File generated').then(() => {
+				console.log('(WIP) Opening file: ' + document.fileName);
+				// if (fs.existsSync(tsFile)) {
+				// 	vscode.window.showTextDocument(vscode.Uri.file(tsFile));
+				// }
+			});
+		} else {
+			await vscode.window.showErrorMessage(
+				'Failed! File needs to have the .sts extension',
+			);
+		}
+	}
 }
