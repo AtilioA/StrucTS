@@ -11,8 +11,14 @@ import { generateCommands as generateDot } from './dot_generator';
 export const generateAction = async (fileName: string, options: GenerateOptions): Promise<void> => {
 	const services = createStrucTsServices(NodeFileSystem).StrucTs;
 	const model = await extractAstNode<Model>(fileName, services);
+
+	const startTime = process.hrtime();
 	const generatedFilePath = generateCommands(model, fileName, options.destination);
-	console.log(chalk.green(`TypeScript code generated successfully: ${generatedFilePath}`));
+	const endTime = process.hrtime(startTime);
+
+	const executionTimeInMs = ((endTime[0] * 1e9) + endTime[1]) / 1e6;
+
+	console.log(chalk.green(`TypeScript code generated successfully (took ${Math.round(executionTimeInMs)}ms): ${generatedFilePath}`));
 };
 
 export const generateDotAction = async (fileName: string, options: GenerateOptions): Promise<void> => {
