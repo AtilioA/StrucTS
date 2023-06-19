@@ -88,7 +88,7 @@ export function generateBuilderClassDoc(cls: Class): CompositeGeneratorNode {
 
 	docNode.append(NL, '/**', NL);
 	docNode.append(' * StrucTS: Builder class for ', cls.name, ' objects', NL);
-	docNode.append(' * This class able to build objects of type ', cls.name, ' by setting its properties one by one', NL);
+	docNode.append(' * This class is able to build objects of type ', cls.name, ' by setting its properties one by one.', NL);
 	docNode.append(' */');
 
 	return docNode;

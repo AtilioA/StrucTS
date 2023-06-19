@@ -11,5 +11,5 @@ class Task implements Builder {
     attribute description: string;
     attribute status: string;
     attribute completed: boolean;
-    composed_of subtasks: Task[1..2];
+    composed_of subtasks: Task[0..*];
 }
