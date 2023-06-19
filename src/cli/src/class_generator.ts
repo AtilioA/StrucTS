@@ -1,36 +1,47 @@
 import { CompositeGeneratorNode, NL, IndentNode } from 'langium';
-import { type Class, type Property, isProperty, isComposedProperty, isReferenceProperty, isClassReference, isMethod } from '../../language-server/generated/ast';
-import { type IImplementedInterfaces, getImplementedInterfaces } from '../utils/model_checks';
+import { type Class, type Property, isProperty, isComposedProperty, isMethod, type Model, isClass } from '../../language-server/generated/ast';
+import { type IImplementedInterfaces, getImplementedInterfaces, isComposedInOtherClasses } from '../utils/model_checks';
 import { createCollectionString } from '../utils/strings';
 import { generateBuilderClass } from './builder_generator';
 import { generateCollectionInterface, generateProperty, getPropertyParameters } from './property_generator';
 import { generateFactoryClass } from './factory_generator';
 
-export function generateDestroy(cls: Class): IndentNode {
-	// Check if there is any ClassReference in the class
+export function generateDestroy(cls: Class, model: Model): IndentNode {
 	const destroyNode = new IndentNode();
-	const hasClassReference = cls.statements.some(statement => isClassReference(statement));
 
-	if (hasClassReference) {
+	const hasComposition = cls.statements.some(statement => isComposedProperty(statement));
+	const isComposedInOthers = isComposedInOtherClasses(cls, model);
+
+	// Check if we should generate a destroy method
+	if (hasComposition || isComposedInOthers) {
+		destroyNode.append(`/* StrucTS: Add any cleanup logic specific to the ${cls.name} class here */`, NL);
 		destroyNode.append('public destroy(): void {', NL);
+
 		const destroyBody = new IndentNode();
-		destroyBody.append(`/* StrucTS: Add any cleanup logic specific to the ${cls.name} class here */`, NL);
 
-		const properties = cls.statements.filter(statement => isProperty(statement));
+		if (isComposedInOthers) {
+			// If this class is composed in any other class, 'add additional logic here'
+			destroyBody.append(`console.log('${cls.name} instance is being destroyed.')`, NL);
+		}
 
-		// Iterate through class properties to find collections
-		for (const property of properties) {
-			if (isComposedProperty(property) || isReferenceProperty(property)) {
-				const propertyName = property.name;
-				// const itemType = property.type.class.ref?.name;
-				destroyBody.append(`for (const item of this.${propertyName}.getItems()) {`, NL);
-				// REVIEW: add actual indentation
-				destroyBody.append('    item.destroy();', NL);
-				destroyBody.append('}', NL);
+		// If the class has composition, destroy composed items
+		if (hasComposition) {
+			const properties = cls.statements.filter(statement => isProperty(statement));
+			// Iterate through class properties to find collections
+			for (const property of properties) {
+				if (isComposedProperty(property)) {
+					const propertyName = property.name;
+					const destroyComposedBody = new IndentNode();
+
+					destroyBody.append(`for (const item of this.${propertyName}.getItems()) {`, NL);
+					destroyComposedBody.append('item.destroy();', NL);
+					destroyBody.append(destroyComposedBody);
+					destroyBody.append('}', NL);
+				}
 			}
 		}
 
-		destroyNode.append(destroyBody, '}');
+		destroyNode.append(destroyBody, '}', NL);
 	}
 
 	return destroyNode;
@@ -77,7 +88,7 @@ export function generateClassConstructor(cls: Class, implementedInterfaces: IImp
 	return classConstructor;
 }
 
-export function generateClass(cls: Class): CompositeGeneratorNode {
+export function generateClass(cls: Class, model: Model): CompositeGeneratorNode {
 	const classGeneratorNode = new CompositeGeneratorNode();
 
 	const implementedInterfaces = getImplementedInterfaces(cls);
@@ -104,7 +115,7 @@ export function generateClass(cls: Class): CompositeGeneratorNode {
 	const classCollectionsInterfaces = generateCollectionInterface(cls);
 	classGeneratorNode.append(classCollectionsInterfaces);
 
-	const classDestroyMethod = generateDestroy(cls);
+	const classDestroyMethod = generateDestroy(cls, model);
 	classGeneratorNode.append(classDestroyMethod);
 
 	// Class 'footer'
@@ -121,4 +132,18 @@ export function generateClass(cls: Class): CompositeGeneratorNode {
 	}
 
 	return classGeneratorNode;
+}
+
+export function generateClasses(model: Model): CompositeGeneratorNode {
+	const classesNode = new CompositeGeneratorNode();
+
+	// Iterate through the top-level elements in the Model (AST)
+	for (const element of model.elements) {
+		if (isClass(element)) {
+			const classNode = generateClass(element, model);
+			classesNode.append(classNode, NL);
+		}
+	}
+
+	return classesNode;
 }

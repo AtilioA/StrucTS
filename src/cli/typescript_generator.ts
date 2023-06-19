@@ -2,23 +2,17 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execSync } from 'node:child_process';
 import { CompositeGeneratorNode, NL, toString } from 'langium';
-import { type Model, isClass } from '../language-server/generated/ast';
+import { type Model } from '../language-server/generated/ast';
 import { extractDestinationAndName } from './cli-util';
 import { appendImports } from './utils/fs-utils';
-import { generateClass } from './src/class_generator';
+import { generateClasses } from './src/class_generator';
 
 export function generateTypeScript(model: Model, destination: string | undefined): string {
 	const fileNode = new CompositeGeneratorNode();
 
 	appendImports(fileNode, model, destination);
 
-	// Iterate through the top-level elements in the Model (AST)
-	for (const element of model.elements) {
-		if (isClass(element)) {
-			const classNode = generateClass(element);
-			fileNode.append(classNode, NL);
-		}
-	}
+	fileNode.append(generateClasses(model), NL);
 
 	return toString(fileNode);
 }

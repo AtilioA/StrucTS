@@ -1,4 +1,4 @@
-import { type Model, type Class, type Property, isClass, isProperty } from '../../language-server/generated/ast';
+import { type Model, type Class, type Property, isClass, isProperty, isComposedProperty } from '../../language-server/generated/ast';
 
 export type IImplementedInterfaces = {
 	Factory: boolean;
@@ -31,6 +31,20 @@ export function hasCardinality(model: Model): boolean {
 		if (isClass(element)) {
 			for (const prop of element.statements) {
 				if (isProperty(prop) && checkCardinalityConstraints(prop)) {
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+export function isComposedInOtherClasses(cls: Class, model: Model): boolean {
+	for (const element of model.elements) {
+		if (isClass(element)) {
+			for (const statement of element.statements) {
+				if (isComposedProperty(statement) && statement.type.class.ref?.name === cls.name) {
 					return true;
 				}
 			}
