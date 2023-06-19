@@ -1,14 +1,14 @@
 // This file represents the main components of a Library Management System (LMS) and their relationships, including Library, Book, and Member.
 
 // This class abstracts the concept of a Library, which has a name and is composed of Books and Members.
-class Library implements Factory {
+class Library {
   attribute name: string;
   composed_of books: Book[1..*];
   composed_of members: Member[1..*];
 }
 
 // This class abstracts the concept of a Book, which has a title, an author, an ISBN, and a reference to the Member who borrowed it (if any).
-class Book implements (Builder) {
+class Book implements Builder {
   attribute title: string;
   attribute author: string;
   attribute isbn: string;

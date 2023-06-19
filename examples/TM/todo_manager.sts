@@ -1,15 +1,15 @@
 // This class abstracts the concept of a TodoManager, which has a name and is composed of Tasks.
-class TodoManager implements Factory {
+class TodoManager {
     attribute name: string;
     composed_of tasks: Task[1..*];
 }
 
 // This class abstracts the concept of a Task, which has a title, description, status, and a list of subtasks.
-// It uses the Builder interface to indicate that the generated code will include a Builder class for constructing instances of Task.
+// It uses the Builder interface to indicate that the generated code will include a Builder class for enabling step-by-step construction of Task objects.
 class Task implements Builder {
     attribute title: string;
     attribute description: string;
     attribute status: string;
     attribute completed: boolean;
-    composed_of subtasks: Task[0..*];
+    composed_of subtasks: Task[1..2];
 }
