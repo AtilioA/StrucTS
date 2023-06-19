@@ -1,5 +1,5 @@
 import { CompositeGeneratorNode, NL, IndentNode } from 'langium';
-import { type Class, type Property, isProperty, isComposedProperty, isReferenceProperty, isClassReference } from '../../language-server/generated/ast';
+import { type Class, type Property, isProperty, isComposedProperty, isReferenceProperty, isClassReference, isMethod } from '../../language-server/generated/ast';
 import { type IImplementedInterfaces, getImplementedInterfaces } from '../utils/model_checks';
 import { createCollectionString } from '../utils/strings';
 import { generateBuilderClass } from './builder_generator';
@@ -45,6 +45,14 @@ export function generateClassConstructor(cls: Class, implementedInterfaces: IImp
 	const bodyNode = new IndentNode();
 	if (implementedInterfaces.Builder) {
 		classConstructor.append('constructor() {', NL);
+
+		// REFACTOR: move this to a separate function
+		for (const property of cls.statements.filter(statement => isProperty(statement))) {
+			if ((property as Property).cardinality && !isMethod(property)) {
+				bodyNode.append(`this.${property.name} = ${createCollectionString(property)}`, NL);
+			}
+		}
+
 		bodyNode.append('return this;', NL);
 	} else {
 		classConstructor.append(`constructor(${constructorParameters}) {`, NL);
@@ -103,7 +111,7 @@ export function generateClass(cls: Class): CompositeGeneratorNode {
 	classGeneratorNode.append('}', NL);
 
 	if (implementedInterfaces.Factory && implementedInterfaces.Builder) {
-		// ...
+		// Left for future implementation, if desired
 	} else if (implementedInterfaces.Factory) {
 		const factoryClass = generateFactoryClass(cls);
 		classGeneratorNode.append(factoryClass);

@@ -2,10 +2,10 @@ import { type GeneratorNode, CompositeGeneratorNode, NL, IndentNode } from 'lang
 import { type ComposedProperty, type AttributeProperty, type ReferenceProperty, type Property, isComposedProperty, isAttributeProperty, isReferenceProperty, type Class, isProperty } from '../../language-server/generated/ast';
 import { makeFirstLetterUpperCase } from '../utils/strings';
 
+// Maybe this is simply the same as generateReferenceProperty
 export function generateComposedProperty(property: ComposedProperty): GeneratorNode {
 	const propertyNode = new CompositeGeneratorNode();
 
-	// FIXME: managing composition is needed
 	if (property.cardinality) {
 		// REVIEW: maybe this should not be readonly
 		propertyNode.append('private readonly ', property.name, ': ');

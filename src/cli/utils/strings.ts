@@ -1,4 +1,4 @@
-import { type Property, isAttributeProperty, type Cardinality } from '../../language-server/generated/ast';
+import { type Property, isAttributeProperty, type Cardinality, isComposedProperty, isReferenceProperty } from '../../language-server/generated/ast';
 
 type ICardinalityLimit = {
  upper: string | undefined;
@@ -27,10 +27,12 @@ export function createCollectionString(property: Property) {
 
 	if (isAttributeProperty(property)) {
 		return `new CustomCollection<${property.type}>(${cardinalityLimits.lower}, ${cardinalityLimits.upper});`;
-	} else {
+	} else if (isReferenceProperty(property) || isComposedProperty(property)) {
 		// Composition or reference
 		return `new CustomCollection<${property.type.class.ref?.name}>(${cardinalityLimits.lower}, ${cardinalityLimits.upper});`;
 	}
+
+	return '';
 }
 
 // Adapted from https://stackoverflow.com/a/73876341; license might vary
