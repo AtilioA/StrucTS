@@ -5,15 +5,15 @@ import { type Model } from '../language-server/generated/ast';
 import { StrucTsLanguageMetaData } from '../language-server/generated/module';
 import { createStrucTsServices } from '../language-server/struc-ts-module';
 import { extractAstNode } from './cli-util';
-import { generateCommands } from './typescript_generator';
-import { generateCommands as generateDot } from './dot_generator';
+import { generateTSFile } from './typescript_generator';
+import { generateGVFile } from './dot_generator';
 
 export const generateAction = async (fileName: string, options: GenerateOptions): Promise<void> => {
 	const services = createStrucTsServices(NodeFileSystem).StrucTs;
 	const model = await extractAstNode<Model>(fileName, services);
 
 	const startTime = process.hrtime();
-	const generatedFilePath = generateCommands(model, fileName, options.destination);
+	const generatedFilePath = generateTSFile(model, fileName, options.destination);
 	const endTime = process.hrtime(startTime);
 
 	const executionTimeInMs = ((endTime[0] * 1e9) + endTime[1]) / 1e6;
@@ -24,7 +24,7 @@ export const generateAction = async (fileName: string, options: GenerateOptions)
 export const generateDotAction = async (fileName: string, options: GenerateOptions): Promise<void> => {
 	const services = createStrucTsServices(NodeFileSystem).StrucTs;
 	const model = await extractAstNode<Model>(fileName, services);
-	const generatedFilePath = generateDot(model, fileName, options.destination);
+	const generatedFilePath = generateGVFile(model, fileName, options.destination);
 	console.log(chalk.green(`Graphviz .gv file generated successfully: ${generatedFilePath}`));
 };
 
