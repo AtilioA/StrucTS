@@ -3,7 +3,6 @@
 class Album {
   attribute title: string;
   references artist: Artist;
-  // Maybe this should not have a cardinality, since it is a composition.
   composed_of songs: Song[1..*];
 }
 
