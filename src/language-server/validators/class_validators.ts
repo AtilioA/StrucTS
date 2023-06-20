@@ -1,5 +1,5 @@
 import { type ValidationAcceptor } from 'langium';
-import { isProperty, type Class, isMethod, isReferenceProperty } from '../generated/ast';
+import { isProperty, type Class, isMethod } from '../generated/ast';
 import { areCardinalitiesValid } from './utils';
 
 /**
@@ -33,18 +33,6 @@ export class StrucTSClassValidator {
 					if (!validationResult.valid) {
 						accept('error', `Invalid cardinality '${lowerLimit}..${upperLimit}': ${validationResult.message}`, { node: statement, property: 'cardinality' });
 					}
-				}
-			}
-		}
-	}
-
-	// Check if the referenced class is the same as the current class
-	checkDirectSelfReferences(classNode: Class, accept: ValidationAcceptor): void {
-		for (const statement of classNode.statements) {
-			if (isProperty(statement) && isReferenceProperty(statement)) {
-				const referencedClass = statement.type?.class?.ref;
-				if (referencedClass && referencedClass === classNode) {
-					accept('error', `Class '${classNode.name}' has a direct self-reference.`, { node: statement, property: 'name' });
 				}
 			}
 		}

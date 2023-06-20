@@ -22,7 +22,6 @@ export function registerValidationChecks(services: StrucTsServices) {
 		Class: [
 			classValidator.checkUniqueAttributeNames,
 			classValidator.checkValidCardinality,
-			classValidator.checkDirectSelfReferences,
 			classValidator.checkUniqueMethodNames,
 			classValidator.checkMethodNameNotClassName,
 			classValidator.checkMethodNameNotPropertyName,
