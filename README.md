@@ -94,8 +94,6 @@ To use it as a VS Code extension, either download the latest version from the [r
 
 Then, open a `.sts` file. You should have should have syntax highlighting and error validation for your StrucTS programs.
 
-You can also press `Ctrl+Shift+P` to open the command palette, and select `Generate TypeScript code from StrucTS model` to generate TypeScript code from your StrucTS model, or `Generate GraphViz code from StrucTS model` to generate a GraphViz .gv model.
-
 Instructions for building the extension itself are available in the [Langium documentation](https://langium.org/tutorials/building_an_extension/).
 
 ## Acknowledgments
