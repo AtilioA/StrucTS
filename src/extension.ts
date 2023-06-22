@@ -5,7 +5,7 @@ import {
 } from 'vscode-languageclient/node';
 import { NodeFileSystem } from 'langium/node';
 import { generateTSFile } from './cli/typescript_generator';
-import { extractAstNode } from './cli/cli-util';
+import { extractAstNode } from './cli/utils/cli-util';
 import { type Model } from './language-server/generated/ast';
 import { createStrucTsServices } from './language-server/struc-ts-module';
 

@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { CompositeGeneratorNode, IndentNode, NL, toString } from 'langium';
 import { type Model, isClass } from '../language-server/generated/ast';
-import { extractDestinationAndName } from './cli-util';
+import { extractDestinationAndName } from './utils/cli-util';
 import { generateAssociations, generateGraphvizClass } from './src/graphviz/class_generator';
 
 export function generateDot(model: Model): string {

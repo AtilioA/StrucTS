@@ -3,7 +3,7 @@ import path from 'node:path';
 import { execSync } from 'node:child_process';
 import { CompositeGeneratorNode, NL, toString } from 'langium';
 import { type Model } from '../language-server/generated/ast';
-import { extractDestinationAndName } from './cli-util';
+import { extractDestinationAndName } from './utils/cli-util';
 import { appendImports } from './utils/fs-utils';
 import { generateClasses } from './src/class_generator';
 

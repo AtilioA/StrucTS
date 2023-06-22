@@ -27,6 +27,4 @@ class Transaction {
   attribute transactionID: string;
   attribute amount: number;
   references accountInvolved: Account[1];
-  // attribute type: EnumTransactionType;
-  // attribute date: dateTime;
 }

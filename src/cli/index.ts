@@ -4,7 +4,7 @@ import { NodeFileSystem } from 'langium/node';
 import { type Model } from '../language-server/generated/ast';
 import { StrucTsLanguageMetaData } from '../language-server/generated/module';
 import { createStrucTsServices } from '../language-server/struc-ts-module';
-import { extractAstNode } from './cli-util';
+import { extractAstNode } from './utils/cli-util';
 import { generateTSFile } from './typescript_generator';
 import { generateGVFile } from './dot_generator';
 
