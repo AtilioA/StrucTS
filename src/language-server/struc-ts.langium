@@ -11,15 +11,11 @@ Element:
 
 // Define the 'Class' rule to capture class definitions
 Class:
-    'class' name=ID (implements=Implements)? '{'
+    'class' name=ID (generate=Generate)? '{'
     statements+=ClassElement* '}';
 
-Implements:
-    'implements' (
-        // Allow optional parenthesis around the implemented interfaces
-        '(' implemented+=Interface (',' implemented+=Interface)* ')' |
-        implemented+=Interface (',' implemented+=Interface)*
-    );
+Generate:
+    '(' 'generate' generated+=Pattern (',' generated+=Pattern)* ')';
 
 ClassElement:
     Property | Method;
@@ -31,16 +27,16 @@ Method:
 Parameter:
     name=ID (':' type=Type)?;
 
-/* SECTION: Class Interfaces  */
-Interface:
-    FactoryInterface | BuilderInterface;
+/* SECTION: Class Patterns  */
+Pattern:
+    FactoryPattern | BuilderPattern;
 
-// Define the 'FactoryInterface' rule for capturing factory implementations
-FactoryInterface:
-    name='Factory';
+// Define the 'FactoryPattern' rule for capturing factory implementations
+FactoryPattern:
+    name='factory';
 
-BuilderInterface:
-    name='Builder';
+BuilderPattern:
+    name='builder';
 
 /* SECTION: Class Properties */
 Property:

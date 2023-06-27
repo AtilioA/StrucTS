@@ -26,7 +26,7 @@ export function registerValidationChecks(services: StrucTsServices) {
 			classValidator.checkMethodNameNotClassName,
 			classValidator.checkMethodNameNotPropertyName,
 			classValidator.checkUniqueParameterNames,
-			classValidator.checkUniqueImplementedPatterns,
+			// classValidator.checkUniqueImplementedPatterns,
 		] };
 
 	registry.register(classChecks, modelValidator);

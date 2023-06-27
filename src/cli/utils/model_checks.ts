@@ -1,23 +1,23 @@
 import { type Model, type Class, type Property, isClass, isProperty, isComposedProperty } from '../../language-server/generated/ast';
 
-export type IImplementedInterfaces = {
-	Factory: boolean;
-	Builder: boolean;
+export type IGeneratedPatterns = {
+	factory: boolean;
+	builder: boolean;
 };
 
-export function getImplementedInterfaces(classDef: Class): IImplementedInterfaces {
-	const implementedInterfaces: IImplementedInterfaces = {
-		Factory: false,
-		Builder: false,
+export function getGeneratedPatterns(classDef: Class): IGeneratedPatterns {
+	const generatedPatterns: IGeneratedPatterns = {
+		factory: false,
+		builder: false,
 	};
 
-	if (classDef.implements) {
-		for (const implemented of classDef.implements.implemented) {
-			implementedInterfaces[implemented.name] = true;
+	if (classDef.generate) {
+		for (const generated of classDef.generate.generated) {
+			generatedPatterns[generated.name] = true;
 		}
 	}
 
-	return implementedInterfaces;
+	return generatedPatterns;
 }
 
 // Check if a property has cardinality constraints

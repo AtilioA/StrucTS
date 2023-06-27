@@ -96,16 +96,17 @@ export class StrucTSClassValidator {
 	}
 
 	// Check if the implemented patterns are unique within a class
-	checkUniqueImplementedPatterns(classNode: Class, accept: ValidationAcceptor): void {
-		const implementedPatterns = new Set<string>();
-		if (classNode.implements) {
-			for (const implementation of classNode.implements.implemented) {
-				if (implementedPatterns.has(implementation.name)) {
-					accept('error', `Duplicate implemented pattern '${implementation.name}'.`, { node: classNode.implements, property: 'implemented', index: classNode.implements.implemented.indexOf(implementation) });
-				} else {
-					implementedPatterns.add(implementation.name);
-				}
-			}
-		}
-	}
+	// checkUniqueGeneratedPatterns(classNode: Class, accept: ValidationAcceptor): void {
+	// 	const generatedPatterns = new Set<string>();
+	// 	if (classNode.generate?.generated) {
+	// 		for (const generated of classNode.generate.generated) {
+	// 			if (generated && generatedPatterns.has(generated.name as string)) {
+	// 				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+	// 				accept('error', `Duplicate generated pattern '${generated.name}'.`, { node: classNode.generate, property: 'generated', index: classNode?.generate?.generated?.indexOf(generated) });
+	// 			} else {
+	// 				generatedPatterns.add(generated.name as string);
+	// 			}
+	// 		}
+	// 	}
+	// }
 }

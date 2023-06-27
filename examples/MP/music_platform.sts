@@ -7,7 +7,7 @@ class Album {
 }
 
 // This class abstracts the concept of an artist, which has a name. This class also uses the Factory interface, which indicates that the generated code will include a Factory class, with all the necessary methods to create instances of this class according to the Factory pattern.
-class Artist implements Factory {
+class Artist (generate factory) {
   attribute name: string;
 }
 
@@ -18,8 +18,8 @@ class Song {
   // references inAlbum: Album[1];
 }
 
-// This class abstracts the concept of a playlist, which has a name, and a list of songs. A Playlist can have many songs. It implements the Builder pattern, which enables the construction of a Playlist object in a step-by-step fashion.
-class Playlist implements Builder {
+// This class abstracts the concept of a playlist, which has a name, and a list of songs. A Playlist can have many songs. It generates the Builder pattern, which enables the construction of a Playlist object in a step-by-step fashion.
+class Playlist (generate builder) {
   attribute name: string;
   references songs: Song[*];
 }

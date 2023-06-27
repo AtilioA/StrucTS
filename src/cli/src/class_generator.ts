@@ -1,6 +1,6 @@
 import { CompositeGeneratorNode, NL, IndentNode } from 'langium';
 import { type Class, type Property, isProperty, isComposedProperty, isMethod, type Model, isClass } from '../../language-server/generated/ast';
-import { type IImplementedInterfaces, getImplementedInterfaces, isComposedInOtherClasses } from '../utils/model_checks';
+import { type IGeneratedPatterns, isComposedInOtherClasses, getGeneratedPatterns } from '../utils/model_checks';
 import { createCollectionString } from '../utils/strings';
 import { generateBuilderClass } from './builder_generator';
 import { generateCollectionInterface, generateProperty, getPropertyParameters } from './property_generator';
@@ -47,14 +47,14 @@ export function generateDestroy(cls: Class, model: Model): IndentNode {
 	return destroyNode;
 }
 
-export function generateClassConstructor(cls: Class, implementedInterfaces: IImplementedInterfaces): IndentNode {
+export function generateClassConstructor(cls: Class, generatedPatterns: IGeneratedPatterns): IndentNode {
 	const classConstructor = new IndentNode();
 
 	// Method signature with parameters
 	const constructorParameters = getPropertyParameters(cls);
 
 	const bodyNode = new IndentNode();
-	if (implementedInterfaces.Builder) {
+	if (generatedPatterns.builder) {
 		classConstructor.append('constructor() {', NL);
 
 		// REFACTOR: move this to a separate function
@@ -91,7 +91,7 @@ export function generateClassConstructor(cls: Class, implementedInterfaces: IImp
 export function generateClass(cls: Class, model: Model): CompositeGeneratorNode {
 	const classGeneratorNode = new CompositeGeneratorNode();
 
-	const implementedInterfaces = getImplementedInterfaces(cls);
+	const generatedPatterns = getGeneratedPatterns(cls);
 
 	// Class header
 	classGeneratorNode.append('export class ', cls.name, ' {', NL);
@@ -109,7 +109,7 @@ export function generateClass(cls: Class, model: Model): CompositeGeneratorNode 
 
 	classGeneratorNode.append(classAttributes);
 
-	const classConstructor = generateClassConstructor(cls, implementedInterfaces);
+	const classConstructor = generateClassConstructor(cls, generatedPatterns);
 	classGeneratorNode.append(classConstructor);
 
 	const classCollectionsInterfaces = generateCollectionInterface(cls);
@@ -121,12 +121,12 @@ export function generateClass(cls: Class, model: Model): CompositeGeneratorNode 
 	// Class 'footer'
 	classGeneratorNode.append('}', NL);
 
-	if (implementedInterfaces.Factory && implementedInterfaces.Builder) {
+	if (generatedPatterns.factory && generatedPatterns.builder) {
 		// Left for future implementation, if desired
-	} else if (implementedInterfaces.Factory) {
+	} else if (generatedPatterns.factory) {
 		const factoryClass = generateFactoryClass(cls);
 		classGeneratorNode.append(factoryClass);
-	} else if (implementedInterfaces.Builder) {
+	} else if (generatedPatterns.builder) {
 		const builderClass = generateBuilderClass(cls);
 		classGeneratorNode.append(builderClass);
 	}
