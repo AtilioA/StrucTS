@@ -96,6 +96,7 @@ export function generateClass(cls: Class, model: Model): CompositeGeneratorNode 
 	// Class header
 	classGeneratorNode.append('export class ', cls.name, ' {', NL);
 
+	// Class body
 	// Iterate through the properties of the class and generate code for each property
 	const classAttributes = new IndentNode();
 	const classProperties = cls.statements.filter(statement => isProperty(statement));

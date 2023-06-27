@@ -58,7 +58,6 @@ AttributeProperty:
 ReferenceProperty:
     'references' name=ID ':' type=ClassReference cardinality=Cardinality? ';';
 
-
 /* SECTION: Data Types */
 // Define the 'Type' rule to represent types in the DSL. It can be a primitive type or a reference to another class object
 Type:
@@ -76,11 +75,9 @@ CARDINALITY_LIMIT returns string:
     '*' | INT;
 
 /* SECTION: Terminal rules */
-// Define terminal rules
 hidden terminal WS: /\s+/;
 terminal ID: /[_a-zA-Z][\w_]*/;
 terminal INT returns number: /[0-9]+/;
-// terminal STRING: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/;
 
 // Define comment rules
 hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;

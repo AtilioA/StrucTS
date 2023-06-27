@@ -1,4 +1,4 @@
-import { type Cardinality, type Property, isReferenceProperty, isComposedProperty } from '../../../language-server/generated/ast';
+import { type Cardinality, type AttributeProperty } from '../../../language-server/generated/ast';
 
 export function generateCardinalityString(cardinality: Cardinality | undefined) {
 	if (cardinality) {
@@ -12,10 +12,6 @@ export function generateCardinalityString(cardinality: Cardinality | undefined) 
 	return '';
 }
 
-export function generateGraphvizProperty(property: Property): string {
-	if (isReferenceProperty(property) || isComposedProperty(property)) {
-		return `${property.name}: ${property.type.class.ref?.name} ${generateCardinalityString(property.cardinality)}`;
-	} else {
-		return `${property.name}: ${property.type}`;
-	}
+export function generateGraphvizProperty(property: AttributeProperty): string {
+	return `${property.name}: ${property.type}`;
 }
