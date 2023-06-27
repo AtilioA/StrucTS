@@ -4,11 +4,10 @@ grammar StrucTs
 entry Model:
     elements+=Element*;
 
-
 /* SECTION: Basic elements */
 // Define an element to represent the different constructs in the DSL
 Element:
-    Class/*| Association*/;
+    Class;
 
 // Define the 'Class' rule to capture class definitions
 Class:
@@ -33,21 +32,17 @@ Parameter:
     name=ID (':' type=Type)?;
 
 /* SECTION: Class Interfaces  */
-// Define a generic 'Interface' rule to capture interfaces, like 'FactoryInterface'
 Interface:
     FactoryInterface | BuilderInterface;
 
 // Define the 'FactoryInterface' rule for capturing factory implementations
 FactoryInterface:
-    // REVIEW: This might be a hack to have 'Factory' as a keyword
     name='Factory';
 
 BuilderInterface:
     name='Builder';
 
 /* SECTION: Class Properties */
-// Define the 'Property' rule to capture the properties of a class. It can be a statement for composition, attribute, or reference.
-
 Property:
     ReferencingProperty | AttributeProperty;
 
@@ -62,11 +57,9 @@ ComposedProperty:
     'composed_of' name=ID ':' type=ClassReference cardinality=Cardinality? ';';
 
 AttributeProperty:
-    // REVIEW: do we really want to allow cardinality for primitive types?
     'attribute' name=ID ':' type=DataType cardinality=Cardinality? ';';
 
 ReferenceProperty:
-    // REVIEW: This is, effectively, an association
     'references' name=ID ':' type=ClassReference cardinality=Cardinality? ';';
 
 
@@ -85,14 +78,6 @@ Cardinality:
 
 CARDINALITY_LIMIT returns string:
     '*' | INT;
-
-
-// REVIEW: Check if this is needed
-// // Define the 'Association' rule to capture associations between classes
-// Association:
-//     'association' name=ID '{' 'between:' left=ClassReference cardinalityLeft=Cardinality
-//     'and' right=ClassReference cardinalityRight=Cardinality ';' '}';
-
 
 /* SECTION: Terminal rules */
 // Define terminal rules
