@@ -15,7 +15,7 @@ export function generateAssociations(model: Model): IndentNode {
 				if (isProperty(property)) {
 					// Check if the property is a reference or composition so we can generate the correct label
 					if (isReferenceProperty(property)) {
-						associationsNode.append(`${cls.name} -> ${property.type.class.ref?.name} [label="${property.name} ${generateCardinalityString(property.cardinality)}"]`, NL);
+						associationsNode.append(`${cls.name} -> ${property.type.class.ref?.name} [label="${property.name} ${generateCardinalityString(property.cardinality)}", arrowhead="vee"]`, NL);
 					} else if (isComposedProperty(property)) {
 						associationsNode.append(`${cls.name} -> ${property.type.class.ref?.name} [label="${property.name} ${generateCardinalityString(property.cardinality)}", arrowtail="diamond", arrowhead="none", dir="both"]`, NL);
 					}
