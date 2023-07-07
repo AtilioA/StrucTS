@@ -7,15 +7,7 @@ class B {
 }
 
 class C {
-    attribute x: number;
-}
-
-class D {
-    composed_of a: A[2..2]; // lower limit is equal to upper limit
-}
-
-class E {
-    attribute x: number;
+    references a: A[2..2]; // lower limit is equal to upper limit
 }
 
 class F {
@@ -23,9 +15,6 @@ class F {
 }
 
 class G {
-    attribute x: number;
+    references a: A[*..*]; // both lower and upper limits are '*'
 }
 
-class H {
-    composed_of a: A[*..*]; // both lower and upper limits are '*'
-}

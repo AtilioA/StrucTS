@@ -1,4 +1,4 @@
-class console {
-    attribute console: string;
-    method console(console: any);
+class package {
+    attribute enum: string;
+    method console(symbol: any);
 }

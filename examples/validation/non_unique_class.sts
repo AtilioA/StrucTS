@@ -6,6 +6,6 @@ class B {
     attribute y: string;
 }
 
-class A { // This should trigger a validation error (duplicate class name)
+class A {
     attribute z: boolean;
 }
