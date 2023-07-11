@@ -8,9 +8,10 @@ With StrucTS, you can define classes, properties, methods, and other constructs 
 ## Features
 
 - [x] Concise and expressive syntax for defining classes and their properties;
-- [x] Common structural modeling concepts handling/abstraction (e.g. associations, compositions);
+- [x] Implements common structural modeling concepts/abstractions (e.g. associations, compositions, cardinalities);
 - [x] Support for imposing cardinality constraints on class attributes;
-- [x] Built-in validation checks for semantic constraints such as unique class names, unique property names, valid cardinalities, etc;
+- [x] Built-in validation checks for semantic constraints such as unique class names, unique property names, valid cardinalities, TypeScript reserved names, etc;
+- [x] Automatic design pattern generation (Factory, Builder);
 - [x] Code generation for TypeScript;
 - [x] Code generation for Graphviz.
 
@@ -20,10 +21,17 @@ With StrucTS, you can define classes, properties, methods, and other constructs 
 
 To use StrucTS, you'll need the following tools installed on your system:
 
-- [`npm`](https://www.npmjs.com/get-npm) (bundled with Node.js)
-- Visual Studio Code (to use it as an extension; not required to use it as a CLI tool)
+#### As CLI tool
 
-### Installation
+- [`npm`](https://www.npmjs.com/get-npm) (bundled with Node.js);
+- [`langium`](https://langium.org/getting_started/installation/).
+
+#### As extension
+
+- [Visual Studio Code](https://code.visualstudio.com/download);
+- StrucTS's extension, available on the [release page](https://github.com/AtilioA/StrucTS/releases).
+
+### Installation (CLI tool)
 
 To use StrucTS, first clone this repository to your local machine and navigate to the project directory:
 
@@ -38,7 +46,18 @@ Next, install the required dependencies:
 npm install
 ```
 
-### Usage
+### Installation (VS Code extension)
+
+Download the latest version from the [release page](https://github.com/AtilioA/StrucTS/releases) and install it in VS Code:
+
+  1. Open VS Code;
+  2. Go to the Extensions tab;
+  3. Click on the *"..."* button;
+  4. Click on *"Install from VSIX..."*;
+  5. Select the downloaded file.
+  6. Reload VS Code.
+
+### Building the CLI and code related to the language
 
 First, generate code for the grammar (AST, etc) with Langium and then build the validators and generators:
 
@@ -47,7 +66,7 @@ langium generate
 npm run build
 ```
 
-#### Usage as CLI tool
+#### Using the CLI tool
 
 Then, to use StrucTS, create a .sts file with your desired class and property definitions. The file should follow the StrucTS syntax, available on `src/language-server/struc-ts.langium`.
 
@@ -67,18 +86,21 @@ class Playlist {
 }
 ```
 
-After defining your model in a `.sts` file, you can use the CLI to check for any semantic constraints violations. Run the following command to generate TypeScript code from your StrucTS model:
+##### Transpiling to TypeScript
+
+After defining your model in a `.sts` file, you can use the CLI to generate TypeScript code from your StrucTS model:
 
 ```bash
 bin/cli generate <file>
 ```
 
-The CLI will inform you of any errors in your model.
+The CLI will inform you of any syntatic or semantic errors in your model.
 
-<br/>
 If there are none, the generated TypeScript code will be placed in the `generated/` directory by default, and can already be used on its own.
-<br/>
+
 The output is linted using ESLint and `xo`, and you can run `npm run lint` to check for any linting errors. However, note that ignored directories (such as `generated/`) cannot linted.
+
+##### Transpiling to DOT (GraphViz visualization)
 
 To visualize the model with GraphViz (.dot/.gv), execute the following command:
 
@@ -88,11 +110,11 @@ bin/cli generate-graphviz <file>
 
 Again, the CLI will inform you of any errors in your model and the generated GraphViz code will be placed in the `generated/` directory by default.
 
-#### Usage as VS Code extension
+### Usage as VS Code extension
 
-To use it as a VS Code extension, either download the latest version from the [release page](https://github.com/AtilioA/StrucTS/releases) and install it in VS Code, or open the project and press F5 to run the extension in debug mode.
+To use it as a VS Code extension, either download the latest version from the [release page](https://github.com/AtilioA/StrucTS/releases) and [install it in VS Code](#installation-vs-code-extension), or follow the instructions under '[Using the CLI tool](#building-the-cli-and-code-related-to-the-language)', open the project in VS Code and press F5 to run the extension in debug mode.
 
-Then, open a `.sts` file. You should have should have syntax highlighting and error validation for your StrucTS programs.
+Then, open a `.sts` file. You should have features such as syntax highlighting and error validation for your StrucTS files.
 
 Instructions for building the extension itself are available in the [Langium documentation](https://langium.org/tutorials/building_an_extension/).
 
