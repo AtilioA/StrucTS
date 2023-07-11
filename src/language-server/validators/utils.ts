@@ -84,9 +84,9 @@ export function areCardinalitiesValid(lowerLimit: string, upperLimit: string): {
 		// If both limits are numbers, check if lower limit is greater or equal to upper limit.
 	}
 
-	if (!Number.isNaN(Number(lowerLimit)) && !Number.isNaN(Number(upperLimit)) && Number(lowerLimit) >= Number(upperLimit)) {
+	if (!Number.isNaN(Number(lowerLimit)) && !Number.isNaN(Number(upperLimit)) && Number(lowerLimit) > Number(upperLimit)) {
 		// If so, the cardinality is invalid. e.g. [2..1] and [2..2] are invalid.
-		return { valid: false, message: 'Lower limit should be strictly less than upper limit.' };
+		return { valid: false, message: 'Lower limit should not be greater than upper limit.' };
 		// All other cases should be valid.
 	}
 

@@ -6,10 +6,6 @@ class B {
     composed_of a: A[3..1]; // lower limit is greater than upper limit
 }
 
-class C {
-    references a: A[2..2]; // lower limit is equal to upper limit
-}
-
 class F {
     composed_of a: A[*..5]; // lower limit is '*' and upper limit is specified
 }
@@ -17,4 +13,3 @@ class F {
 class G {
     references a: A[*..*]; // both lower and upper limits are '*'
 }
-
