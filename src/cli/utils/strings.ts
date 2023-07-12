@@ -11,7 +11,9 @@ export function convertCardinalityLimitToValue(limit: Cardinality | undefined): 
 		lower: limit?.lower?.toString(),
 	};
 
-	if (limit?.upper === '*' || limit?.upper === undefined) {
+	if (limit?.upper === undefined) {
+		limits.upper = Number.isNaN(limit?.lower) ? 'null' : limit?.lower.toString();
+	} else if (limit?.upper === '*') {
 		limits.upper = 'null';
 	}
 
