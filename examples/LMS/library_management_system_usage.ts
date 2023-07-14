@@ -1,3 +1,5 @@
+// OLD EXAMPLE (before Builder pattern; new example available in the thesis)
+
 import { Library, Book, Member } from './library_management_system';
 
 const library = new Library('My Local Library');
